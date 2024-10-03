@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace ClothingBrand.Infrastructure.DataContext
 {
-    public class ApplicationDbContext : IdentityDbContext
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)

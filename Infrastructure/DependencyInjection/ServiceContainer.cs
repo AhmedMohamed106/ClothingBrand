@@ -1,4 +1,5 @@
 ﻿using Application.interfaces;
+using ClothingBrand.Domain.Models;
 using ClothingBrand.Infrastructure.DataContext;
 
 using infrastructure.Repos;
@@ -28,7 +29,7 @@ namespace infrastructure.DependencyInjection
             });
 
 
-            services.AddIdentityCore<ApplicationDbContext>().AddRoles<IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>().AddSignInManager();
+            services.AddIdentityCore<ApplicationUser>().AddRoles<IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>().AddSignInManager();
 
 
             services.AddAuthentication(op =>
