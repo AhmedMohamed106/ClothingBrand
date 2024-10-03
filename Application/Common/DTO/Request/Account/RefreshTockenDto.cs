@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ClothingBrand.Application.Common.Interfaces
+namespace Application.DTOs.Request.Account
 {
-    public interface IApplicationUserRepository
+    public class RefreshTockenDto
     {
+        public string? Token { get; set; }
     }
 }

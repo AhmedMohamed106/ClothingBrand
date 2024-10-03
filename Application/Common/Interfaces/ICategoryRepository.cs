@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ClothingBrand.Application.Common.Interfaces
 {
-    public interface ICategoryRepository : IRepository<Category>
+    public interface ICategoryRepository :IRepository<Category>
     {
 
 
