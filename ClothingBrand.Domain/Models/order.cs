@@ -26,7 +26,6 @@ namespace ClothingBrand.Domain.Models
         // public User User { get; set; }
         public virtual Shipping? Shipping { get; set; } // One-to-one with Shipping
 
-
         // Navigation property
         public virtual ICollection<OrderItem>? OrderItems { get; set; }
 

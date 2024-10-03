@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace ClothingBrand.Application.Common.Utility
 {
-    internal class SD
+    public class SD
     {
+
     }
 }
