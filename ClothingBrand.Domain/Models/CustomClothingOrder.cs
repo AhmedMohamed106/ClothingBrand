@@ -13,7 +13,7 @@ namespace ClothingBrand.Domain.Models
         public string FabricDetails { get; set; }
         public decimal DepositAmount { get; set; }
         public string CustomOrderStatus { get; set; }
-        public int UserId { get; set; }
+       // public int UserId { get; set; }
 
         // Measurement properties
         public double ShoulderWidth { get; set; }
@@ -26,7 +26,7 @@ namespace ClothingBrand.Domain.Models
         public double ModelLength { get; set; }
 
         // Navigation Properties
-        //public User User { get; set; } // Many-to-one with User
+        public virtual ApplicationUser? User { get; set; } // Many-to-one with User
     }
 
 }

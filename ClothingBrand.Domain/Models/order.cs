@@ -22,8 +22,9 @@ namespace ClothingBrand.Domain.Models
         public int ShippingId { get; set; }
 
         // Foreign Key
+        [ForeignKey("User")]
         public int UserId { get; set; }
-        // public User User { get; set; }
+        public virtual ApplicationUser? User { get; set; }
         public virtual Shipping? Shipping { get; set; } // One-to-one with Shipping
 
         // Navigation property
