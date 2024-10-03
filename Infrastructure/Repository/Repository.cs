@@ -20,7 +20,6 @@ namespace ClothingBrand.Infrastructure.Repository
         {
             _db = db;
             dbSet = _db.Set<T>();
-
         }
         public void Add(T entity)
         {
@@ -60,11 +59,6 @@ namespace ClothingBrand.Infrastructure.Repository
 
         public IEnumerable<T> GetAll(Expression<Func<T, bool>>? filter = null, string? includeProperties = null, bool tracked = false)
         {
-            throw new NotImplementedException();
-        }
-
-        public void Remove(T entity)
-        {
             IQueryable<T> query;
             if (tracked)
             {
@@ -87,6 +81,11 @@ namespace ClothingBrand.Infrastructure.Repository
                 }
             }
             return query.ToList();
+        }
+
+        public void Remove(T entity)
+        {
+            dbSet.Remove(entity);
         }
     }
 }

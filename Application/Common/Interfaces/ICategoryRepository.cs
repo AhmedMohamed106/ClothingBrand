@@ -9,5 +9,8 @@ namespace ClothingBrand.Application.Common.Interfaces
 {
     public interface ICategoryRepository : IRepository<Category>
     {
+
+
+
     }
 }
