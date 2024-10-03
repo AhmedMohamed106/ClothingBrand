@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using ClothingBrand.Domain.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -16,6 +17,7 @@ namespace ClothingBrand.Infrastructure.DataContext
 
 
         }
+        public DbSet<RefreshTocken> RefreshTokens { get; set; }
 
 
 

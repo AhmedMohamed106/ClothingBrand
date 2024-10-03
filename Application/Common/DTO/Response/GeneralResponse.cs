@@ -4,9 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ClothingBrand.Application.Common.Interfaces
+namespace Application.DTOs.Response
 {
-    public interface IApplicationUserRepository
-    {
-    }
+    public record GeneralResponse(bool flag=false!,string message=null!);
+    
 }

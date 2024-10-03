@@ -65,28 +65,7 @@ namespace ClothingBrand.Infrastructure.Repository
 
         public void Remove(T entity)
         {
-            IQueryable<T> query;
-            if (tracked)
-            {
-                query = dbSet;
-            }
-            else
-            {
-                query = dbSet.AsNoTracking();
-            }
-            if (filter != null)
-            {
-                query = query.Where(filter);
-            }
-            if (!string.IsNullOrEmpty(includeProperties))
-            {
-                foreach (var includeProp in includeProperties
-                    .Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
-                {
-                    query = query.Include(includeProp.Trim());
-                }
-            }
-            return query.ToList();
+           
         }
     }
 }

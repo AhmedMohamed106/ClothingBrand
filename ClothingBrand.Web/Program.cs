@@ -1,5 +1,5 @@
 
-using ClothingBrand.Infrastructure.DataContext;
+using infrastructure.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 
 namespace ClothingBrand.Web
@@ -14,15 +14,13 @@ namespace ClothingBrand.Web
 
             //register SQL server 
 
-            builder.Services.AddDbContext<ApplicationDbContext>(options =>
-
-            options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+           
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
-
+            builder.Services.AddInfrastructureService(builder.Configuration);
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -31,6 +29,7 @@ namespace ClothingBrand.Web
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+            app.UseCors("Clean");
 
             app.UseHttpsRedirection();
 

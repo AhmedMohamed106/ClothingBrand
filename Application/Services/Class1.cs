@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ClothingBrand.Application.Common.Interfaces
+namespace ClothingBrand.Application.Services
 {
-    public interface IApplicationUserRepository
+    internal class Class1
     {
     }
 }
