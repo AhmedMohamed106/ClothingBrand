@@ -10,7 +10,7 @@ namespace ClothingBrand.Application.Common.Interfaces
     public interface ICategoryRepository :IRepository<Category>
     {
 
-
+        public void Update(Category obj);
 
     }
 }

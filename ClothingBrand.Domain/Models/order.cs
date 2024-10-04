@@ -23,7 +23,7 @@ namespace ClothingBrand.Domain.Models
 
         // Foreign Key
         [ForeignKey("User")]
-        public int UserId { get; set; }
+        public string UserId { get; set; }
         public virtual ApplicationUser? User { get; set; }
         public virtual Shipping? Shipping { get; set; } // One-to-one with Shipping
 

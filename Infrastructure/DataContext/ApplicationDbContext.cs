@@ -18,6 +18,12 @@ namespace ClothingBrand.Infrastructure.DataContext
 
         }
         public DbSet<RefreshTocken> RefreshTokens { get; set; }
+        public DbSet<Product> products { get; set; }
+        public DbSet<Category> categories { get; set; }
+
+        public DbSet<Discount> discounts { get; set; }
+
+
 
 
 

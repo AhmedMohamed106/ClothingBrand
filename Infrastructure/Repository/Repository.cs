@@ -24,6 +24,8 @@ namespace ClothingBrand.Infrastructure.Repository
         public void Add(T entity)
         {
             dbSet.Add(entity);
+            _db.SaveChanges();
+           
         }
 
         public bool Any(Expression<Func<T, bool>> filter)
