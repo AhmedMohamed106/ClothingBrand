@@ -12,7 +12,7 @@ namespace ClothingBrand.Application.Common.Interfaces
         IApplicationUserRepository applicationUserRepository { get; }
         ICategoryRepository categoryRepository { get; }
         ICustomClothingOrderRepository customClothingOrderRepository { get; }
-        IDiscountRepository ciscountRepository { get; }
+        IDiscountRepository discountRepository { get; }
         IOrderItemRepository orderItemRepository { get; }
         IOrderRepository orderRepository { get; }
         IProductRepository productRepository { get; }

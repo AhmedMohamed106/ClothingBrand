@@ -1,7 +1,8 @@
 ﻿using Application.interfaces;
+using ClothingBrand.Application.Common.Interfaces;
 using ClothingBrand.Domain.Models;
 using ClothingBrand.Infrastructure.DataContext;
-
+using ClothingBrand.Infrastructure.Repository;
 using infrastructure.Repos;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -56,6 +57,7 @@ namespace infrastructure.DependencyInjection
             {
                 options.AddPolicy("Clean", bul => bul.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()) ;
             });
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IAccount,AccountRepository>();
             return services;
         }

@@ -10,5 +10,7 @@ namespace ClothingBrand.Application.Common.Interfaces
     public interface ISewingCourseRepository : IRepository<SewingCourse>
     {
 
+        void Update(SewingCourse sewingCourse);
+
     }
 }

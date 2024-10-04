@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ClothingBrand.Application.Services
 {
-    internal class Class1
+    internal class OrderService
     {
     }
 }

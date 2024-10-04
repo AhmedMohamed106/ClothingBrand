@@ -10,5 +10,6 @@ namespace ClothingBrand.Application.Common.Interfaces
 {
     public interface IOrderItemRepository : IRepository<OrderItem>
     {
+        void Update(OrderItem item);
     }
 }

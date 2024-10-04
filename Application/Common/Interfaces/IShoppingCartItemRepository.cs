@@ -9,5 +9,7 @@ namespace ClothingBrand.Application.Common.Interfaces
 {
     public interface IShoppingCartItemRepository : IRepository<ShoppingCartItem>
     {
+
+        void Update(ShoppingCartItem shoppingCartItem);
     }
 }

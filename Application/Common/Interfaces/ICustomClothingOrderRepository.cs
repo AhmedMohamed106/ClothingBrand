@@ -9,5 +9,6 @@ namespace ClothingBrand.Application.Common.Interfaces
 {
     public interface ICustomClothingOrderRepository : IRepository<CustomClothingOrder>
     {
+        void Update(CustomClothingOrder customClothingOrder);
     }
 }
