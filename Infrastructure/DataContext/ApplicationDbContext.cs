@@ -29,6 +29,6 @@ namespace ClothingBrand.Infrastructure.DataContext
         public DbSet<SewingCourse> SewingCourses { get; set; }
         public DbSet<Shipping> Shippings { get; set; }
         public DbSet<ShoppingCart> shoppingCarts { get; set; }
-        public DbSet<ShoppingCartItem> ShoppingCartItems { get; set }
+        public DbSet<ShoppingCartItem> ShoppingCartItems { get; set; }
     }
 }

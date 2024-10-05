@@ -31,12 +31,13 @@ namespace ClothingBrand.Infrastructure.Repository
 
         public IShoppingCartRepository shoppingCartRepository { get; private set; }
 
+        public IDiscountRepository discountRepository { get; private set; }//=> throw new NotImplementedException();
 
         public UnitOfWork(ApplicationDbContext _db)
         {
             this._db = _db;
 
-            applicationUserRepository = 
+            //applicationUserRepository = 
 
 
 

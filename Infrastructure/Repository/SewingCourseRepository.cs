@@ -20,7 +20,14 @@ namespace ClothingBrand.Infrastructure.Repository
 
         public void Update(SewingCourse sewingCourse)
         {
-            _db.SewingCourses.Update(sewingCourse);
+            var courseindb= _db.SewingCourses.FirstOrDefault(c=>c.Id==sewingCourse.Id);
+            if (courseindb != null)
+            {
+                courseindb.Title = sewingCourse.Title;
+                courseindb.Description = sewingCourse.Description;
+                courseindb.Price = sewingCourse.Price;  
+                courseindb.Duration = sewingCourse.Duration;
+            }
         }
     }
 }
