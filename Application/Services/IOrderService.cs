@@ -14,7 +14,7 @@ namespace ClothingBrand.Application.Services
         void UpdateOrderStatus(int orderId, UpdateOrderStatusDto dto); // Update the order status (e.g., Pending, Shipped)
         void UpdatePaymentStatus(int orderId, string paymentStatus); // Update the payment status (e.g., Paid, Unpaid)
         IEnumerable<OrderDto> GetUserOrders(string userId); // Retrieve all orders for a particular user
-        void CancelOrder(int orderId); // Cancel an order
+        bool CancelOrder(int orderId); // Cancel an order
 
         IEnumerable<OrderDto> GetOrders();
 

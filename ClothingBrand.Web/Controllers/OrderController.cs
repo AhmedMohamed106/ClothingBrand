@@ -103,5 +103,18 @@ namespace ClothingBrand.Web.Controllers
 
             return Ok(orders); // Return 200 with orders data
         }
+
+        [HttpPost("{orderId}/cancel")]
+        public ActionResult CancelOrder(int orderId)
+        {
+            var result = _orderService.CancelOrder(orderId);
+
+            if (!result)
+            {
+                return NotFound(); // Return 404 if the order is not found or not cancellable
+            }
+
+            return NoContent(); // Return 204 No Content if cancellation is successful
+        }
     }
 }

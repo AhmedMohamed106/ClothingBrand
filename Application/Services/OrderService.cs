@@ -152,22 +152,20 @@ namespace ClothingBrand.Application.Services
                 });
             }
 
-            public void CancelOrder(int orderId)
+            public bool CancelOrder(int orderId)
             {
                 var order =  _unitOfWork.orderRepository.Get(p=>p.OrderId == orderId);
 
-                if (order == null)
+                if (order == null || order.OrderStatus != "Pending")
                 {
-                    throw new Exception("Order not found");
+                return false;
                 }
 
-                if (order.OrderStatus != "Pending")
-                {
-                    throw new Exception("Only pending orders can be canceled.");
-                }
+               
 
                 order.OrderStatus = "Canceled";
                  _unitOfWork.Save();
+                 return true;
             }
 
         public IEnumerable<OrderDto> GetOrders()
