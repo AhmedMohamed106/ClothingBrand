@@ -26,4 +26,8 @@
     <ProjectReference Include="..\ClothingBrand.Domain\ClothingBrand.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Configuration\" />
+  </ItemGroup>
+
 </Project>

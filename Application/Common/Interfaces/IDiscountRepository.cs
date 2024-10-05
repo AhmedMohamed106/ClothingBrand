@@ -9,5 +9,7 @@ namespace ClothingBrand.Application.Common.Interfaces
 {
     public interface IDiscountRepository : IRepository<Discount>
     {
+
+        void Update(Discount discount);
     }
 }

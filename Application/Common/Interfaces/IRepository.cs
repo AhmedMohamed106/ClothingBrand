@@ -14,6 +14,5 @@ namespace ClothingBrand.Application.Common.Interfaces
         void Add(T entity);
         bool Any(Expression<Func<T, bool>> filter);
         void Remove(T entity);
-
     }
 }

@@ -18,7 +18,7 @@ namespace ClothingBrand.Infrastructure.Repository
 
         public ICustomClothingOrderRepository customClothingOrderRepository { get; private set; }
 
-        public IDiscountRepository ciscountRepository { get; private set; }
+        public IDiscountRepository discountRepository { get; private set; }
 
         public IOrderItemRepository orderItemRepository { get; private set; }
 
@@ -36,7 +36,15 @@ namespace ClothingBrand.Infrastructure.Repository
         {
             this._db = _db;
 
-            applicationUserRepository = 
+            applicationUserRepository = new ApplicationUserRepository(_db);
+            categoryRepository = new CategoryRepository(_db);
+            customClothingOrderRepository = new CustomClothingOrderRepository(_db);
+            discountRepository = new DiscountRepository(_db);
+            orderItemRepository = new OrderItemRepository(_db);
+            productRepository = new ProductRepository(_db);
+            sewingCourseRepository = new SewingCourseRepository(_db);
+            shoppingCartItemRepository = new ShoppingCartItemRepository(_db);
+            shoppingCartRepository = new ShoppingCartRepository(_db);
 
 
 
