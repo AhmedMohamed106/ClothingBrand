@@ -10,7 +10,6 @@ namespace ClothingBrand.Application.Common.Interfaces
     public interface IProductRepository : IRepository<Product>
    
     {
-        void Update(Product product);
-        
+        public void Update(Product obj);
     }
 }

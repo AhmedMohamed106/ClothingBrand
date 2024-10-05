@@ -17,10 +17,27 @@ namespace ClothingBrand.Infrastructure.Repository
         {
             _db = db;
         }
-
-        public void Update(Discount discount)
+        public void Update(Discount obj)
         {
-           _db.Update(discount);
+
+            //_db.products.Update(obj);
+            var objFromDb = _db.Discounts.FirstOrDefault(p => p.Id == obj.Id);
+            if (objFromDb != null)
+            {
+                objFromDb.Code = obj.Code;
+                objFromDb.StartDate = obj.StartDate;
+                objFromDb.EndDate = obj.EndDate;
+
+                objFromDb.Percentage = obj.Percentage;
+                objFromDb.Id = obj.Id;
+                if (obj.Products != null)
+                {
+                    objFromDb.Products = obj.Products;
+                }
+            }
+            _db.SaveChanges();
+
         }
+
     }
 }

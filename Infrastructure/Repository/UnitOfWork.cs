@@ -21,7 +21,6 @@ namespace ClothingBrand.Infrastructure.Repository
         public IDiscountRepository discountRepository { get; private set; }
 
         public IOrderItemRepository orderItemRepository { get; private set; }
-
         public IOrderRepository orderRepository { get; private set; }
         public IProductRepository productRepository { get; private set; }
 

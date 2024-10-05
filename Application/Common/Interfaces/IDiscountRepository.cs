@@ -7,9 +7,8 @@ using System.Threading.Tasks;
 
 namespace ClothingBrand.Application.Common.Interfaces
 {
-    public interface IDiscountRepository : IRepository<Discount>
+    public interface IDiscountRepository :IRepository<Discount>
     {
-
-        void Update(Discount discount);
+        public void Update(Discount obj);
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Application.interfaces;
 using ClothingBrand.Application.Common.Interfaces;
+using ClothingBrand.Application.Services;
 using ClothingBrand.Domain.Models;
 using ClothingBrand.Infrastructure.DataContext;
 using ClothingBrand.Infrastructure.Repository;
@@ -59,6 +60,11 @@ namespace infrastructure.DependencyInjection
             });
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IAccount,AccountRepository>();
+           services.AddScoped<IProductRepository,ProductRepository>();
+            services.AddScoped<ICategoryRepository, CategoryRepository>();
+            services.AddScoped<IDiscountRepository, DiscountRepository>();
+
+
             return services;
         }
     }

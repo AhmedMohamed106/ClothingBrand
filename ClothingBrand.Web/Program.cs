@@ -1,3 +1,4 @@
+using ClothingBrand.Application.Services;
 
 using infrastructure.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
@@ -20,7 +21,13 @@ namespace ClothingBrand.Web
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+          
+
             builder.Services.AddInfrastructureService(builder.Configuration);
+            builder.Services.AddScoped<IcategoryService, CategoryService>();
+            builder.Services.AddScoped<IProductService, ProductService>();
+            builder.Services.AddScoped<IDiscountService, DiscountService>();
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.

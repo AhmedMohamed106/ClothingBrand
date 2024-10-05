@@ -17,10 +17,22 @@ namespace ClothingBrand.Infrastructure.Repository
         {
             _db = db;
         }
-
-        public void Update(Category category)
+        public void Update(Category obj)
         {
-            _db.Categories.Update(category);
+
+            //_db.products.Update(obj);
+            var objFromDb = _db.Categories.FirstOrDefault(p => p.Id == obj.Id);
+            if (objFromDb != null)
+            {
+                objFromDb.Name = obj.Name;
+             
+
+                objFromDb.Description = obj.Description;
+              
+            }
+            _db.SaveChanges();
+
         }
+
     }
 }
