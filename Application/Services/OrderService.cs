@@ -1,156 +1,203 @@
-﻿//using ClothingBrand.Domain.Models;
-//using Microsoft.EntityFrameworkCore;
-//using System;
-//using System.Collections.Generic;
-//using System.Diagnostics.Metrics;
-//using System.Linq;
-//using System.Text;
-//using System.Threading.Tasks;
+﻿using ClothingBrand.Application.Common.DTO.OrderDto;
+using ClothingBrand.Application.Common.Interfaces;
+using ClothingBrand.Application.Services;
+using ClothingBrand.Domain.Models;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics.Metrics;
+using System.Linq.Expressions;
+using System.Text;
+using System.Threading.Tasks;
 
-//namespace ClothingBrand.Application.Services
-//{
-//    private readonly ApplicationDbContext _context;
-//    private readonly IDiscountService _discountService;
-//    private readonly IStripePaymentService _paymentService;
+namespace ClothingBrand.Application.Services
+{
+   
+        public class OrderService : IOrderService
+        {
+            private readonly IUnitOfWork _unitOfWork;
 
-//    public OrderService(ApplicationDbContext context, IDiscountService discountService, IStripePaymentService paymentService)
-//    {
-//        _context = context;
-//        _discountService = discountService;
-//        _paymentService = paymentService;
-//    }
+            public OrderService(
+                IUnitOfWork unitOfWork)
+            {
+                _unitOfWork = unitOfWork;
+            }
 
-//    // Create a new order (with both standard and custom clothing orders support)
-//    public async Task<OrderDto> CreateOrderAsync(OrderCreateDto dto)
-//    {
-//        var order = new Order
-//        {
-//            UserId = dto.UserId,
-//            OrderItems = dto.OrderItems.Select(oi => new OrderItem
-//            {
-//                ProductId = oi.ProductId,
-//                Quantity = oi.Quantity,
-//                UnitPrice = oi.UnitPrice
-//            }).ToList(),
-//            TotalAmount = dto.TotalAmount,
-//            Status = OrderStatus.Pending,
-//            CreatedAt = DateTime.UtcNow,
-//            IsCustomOrder = dto.IsCustomOrder
-//        };
+            public OrderDto CreateOrder(CreateOrderDto createOrderDto)
+            {
+                // Fetch the user and shopping cart
+                var user =  _unitOfWork.applicationUserRepository.Get(p => p.Id == createOrderDto.UserId);
+                var shoppingCart =  _unitOfWork.shoppingCartRepository.Get(p=>p.Id == createOrderDto.ShoppingCartId);
 
-//        // Handle custom order measurements if applicable
-//        if (dto.IsCustomOrder)
-//        {
-//            order.Measurements = new Measurements
-//            {
-//                ShoulderWidth = dto.Measurements.ShoulderWidth,
-//                ChestCircumference = dto.Measurements.ChestCircumference,
-//                WaistCircumference = dto.Measurements.WaistCircumference,
-//                // Add other measurement properties
-//            };
-//        }
+                if (user == null || shoppingCart == null || !shoppingCart.ShoppingCartItems.Any())
+                {
+                    throw new Exception("Invalid user or shopping cart");
+                }
 
-//        // Process payment via Stripe
-//        var paymentResult = await _paymentService.ProcessPaymentAsync(order.TotalAmount);
-//        if (!paymentResult.Success)
-//        {
-//            throw new InvalidOperationException("Payment failed.");
-//        }
+                // Calculate total price
+                decimal totalPrice = shoppingCart.ShoppingCartItems.Sum(item => item.Quantity * item.Product.Price);
 
-//        // Save order to the database
-//        _context.Orders.Add(order);
-//        await _context.SaveChangesAsync();
+                // Create order entity
+                var newOrder = new Order
+                {
+                    OrderDate = DateTime.Now,
+                    TotalPrice = totalPrice,
+                    PaymentStatus = "Unpaid",
+                    OrderStatus = "Pending",
+                    ShippingId = createOrderDto.ShippingId,
+                    UserId = createOrderDto.UserId,
+                    ShoppingCartId = createOrderDto.ShoppingCartId,
+                    OrderItems = shoppingCart.ShoppingCartItems.Select(item => new OrderItem
+                    {
+                        ProductId = item.ProductId,
+                        Quantity = item.Quantity,
+                        Price = item.Product.Price * item.Quantity
+                    }).ToList()
+                };
 
-//        return new OrderDto
-//        {
-//            Id = order.Id,
-//            UserId = order.UserId,
-//            TotalAmount = order.TotalAmount,
-//            Status = order.Status,
-//            CreatedAt = order.CreatedAt
-//        };
-//    }
+                // Save order
+                 _unitOfWork.orderRepository.Add(newOrder);
+                 _unitOfWork.Save();
 
-//    // Apply discount to an existing order
-//    public async Task<bool> ApplyDiscountAsync(int orderId, string discountCode)
-//    {
-//        var order = await _context.Orders.FindAsync(orderId);
-//        if (order == null) return false;
+                return new OrderDto
+                {
+                    OrderId = newOrder.OrderId,
+                    OrderDate = newOrder.OrderDate,
+                    TotalPrice = newOrder.TotalPrice,
+                    PaymentStatus = newOrder.PaymentStatus,
+                    OrderStatus = newOrder.OrderStatus,
+                    UserId = newOrder.UserId,
+                    ShippingId = newOrder.ShippingId,
+                    OrderItems = newOrder.OrderItems.Select(oi => new OrderItemDto
+                    {
+                        ProductId = oi.ProductId,
+                        Quantity = oi.Quantity,
+                        Price = oi.Price
+                    }).ToList()
+                };
+            }
 
-//        var discount = await _discountService.ValidateDiscountAsync(discountCode);
-//        if (discount == null || discount.ExpirationDate < DateTime.UtcNow) return false;
+            public OrderDto GetOrderById(int orderId)
+            {
+                var order =  _unitOfWork.orderRepository.Get(p=>p.OrderId == orderId);
 
-//        order.TotalAmount -= discount.Amount;
-//        await _context.SaveChangesAsync();
-//        return true;
-//    }
+                if (order == null)
+                {
+                    throw new Exception("Order not found");
+                }
 
-//    // Get an order by its ID
-//    public async Task<OrderDto> GetOrderByIdAsync(int id)
-//    {
-//        var order = await _context.Orders.Include(o => o.OrderItems).FirstOrDefaultAsync(o => o.Id == id);
-//        if (order == null) return null;
+                return new OrderDto
+                {
+                    OrderId = order.OrderId,
+                    OrderDate = order.OrderDate,
+                    TotalPrice = order.TotalPrice,
+                    PaymentStatus = order.PaymentStatus,
+                    OrderStatus = order.OrderStatus,
+                    UserId = order.UserId,
+                    ShippingId = order.ShippingId,
+                    OrderItems = order.OrderItems.Select(oi => new OrderItemDto
+                    {
+                        ProductId = oi.ProductId,
+                        Quantity = oi.Quantity,
+                        Price = oi.Price
+                    }).ToList()
+                };
+            }
 
-//        return new OrderDto
-//        {
-//            Id = order.Id,
-//            UserId = order.UserId,
-//            TotalAmount = order.TotalAmount,
-//            Status = order.Status,
-//            CreatedAt = order.CreatedAt,
-//            OrderItems = order.OrderItems.Select(oi => new OrderItemDto
-//            {
-//                ProductId = oi.ProductId,
-//                Quantity = oi.Quantity,
-//                UnitPrice = oi.UnitPrice
-//            }).ToList()
-//        };
-//    }
+            public void UpdateOrderStatus(int orderId, UpdateOrderStatusDto dto)
+            {
+                var order =  _unitOfWork.orderRepository.Get(p=>p.OrderId ==  orderId);
 
-//    // Retrieve all orders for a user
-//    public async Task<IEnumerable<OrderDto>> GetOrdersByUserIdAsync(int userId)
-//    {
-//        return await _context.Orders.Where(o => o.UserId == userId)
-//            .Select(o => new OrderDto
-//            {
-//                Id = o.Id,
-//                TotalAmount = o.TotalAmount,
-//                Status = o.Status,
-//                CreatedAt = o.CreatedAt
-//            }).ToListAsync();
-//    }
+                if (order == null)
+                {
+                    throw new Exception("Order not found");
+                }
 
-//    // Update order status (e.g., Pending -> Shipped)
-//    public async Task<OrderDto> UpdateOrderStatusAsync(int id, UpdateOrderStatusDto dto)
-//    {
-//        var order = await _context.Orders.FindAsync(id);
-//        if (order == null) return null;
+                order.OrderStatus = dto.OrderStatus;
+                 _unitOfWork.Save();
+            }
 
-//        order.Status = dto.Status;
-//        await _context.SaveChangesAsync();
+            public void UpdatePaymentStatus(int orderId, string paymentStatus)
+            {
+                var order =  _unitOfWork.orderRepository.Get(p=>p.OrderId == orderId);
 
-//        return new OrderDto
-//        {
-//            Id = order.Id,
-//            Status = order.Status,
-//            CreatedAt = order.CreatedAt
-//        };
-//    }
+                if (order == null)
+                {
+                    throw new Exception("Order not found");
+                }
 
-//    // Cancel an order (if it hasn't been shipped yet)
-//    public async Task<OrderDto> CancelOrderAsync(int id)
-//    {
-//        var order = await _context.Orders.FindAsync(id);
-//        if (order == null || order.Status != OrderStatus.Pending) return null;
+                order.PaymentStatus = paymentStatus;
+                 _unitOfWork.Save();
+            }
 
-//        order.Status = OrderStatus.Canceled;
-//        await _context.SaveChangesAsync();
+            public IEnumerable<OrderDto> GetUserOrders(string userId)
+            {
+                var orders =  _unitOfWork.orderRepository.GetBy(p=>p.UserId == userId , includeProperties: "OrderItems");
 
-//        return new OrderDto
-//        {
-//            Id = order.Id,
-//            Status = order.Status,
-//            CreatedAt = order.CreatedAt
-//        };
-//    }
-//}
+                return orders.Select(order => new OrderDto
+                {
+                    OrderId = order.OrderId,
+                    OrderDate = order.OrderDate,
+                    TotalPrice = order.TotalPrice,
+                    PaymentStatus = order.PaymentStatus,
+                    OrderStatus = order.OrderStatus,
+                    UserId = order.UserId,
+                    ShippingId = order.ShippingId,
+                    OrderItems = order.OrderItems.Select(oi => new OrderItemDto
+                    {
+                        ProductId = oi.ProductId,
+                        Quantity = oi.Quantity,
+                        Price = oi.Price
+                    }).ToList()
+                });
+            }
+
+            public void CancelOrder(int orderId)
+            {
+                var order =  _unitOfWork.orderRepository.Get(p=>p.OrderId == orderId);
+
+                if (order == null)
+                {
+                    throw new Exception("Order not found");
+                }
+
+                if (order.OrderStatus != "Pending")
+                {
+                    throw new Exception("Only pending orders can be canceled.");
+                }
+
+                order.OrderStatus = "Canceled";
+                 _unitOfWork.Save();
+            }
+
+        public IEnumerable<OrderDto> GetOrders()
+        {
+            var orders = _unitOfWork.orderRepository.GetAll(includeProperties: "OrderItems");
+
+            return orders.Select(order => new OrderDto
+            {
+                OrderId = order.OrderId,
+                OrderDate = order.OrderDate,
+                TotalPrice = order.TotalPrice,
+                PaymentStatus = order.PaymentStatus,
+                OrderStatus = order.OrderStatus,
+                UserId = order.UserId,
+                ShippingId = order.ShippingId,
+                OrderItems = order.OrderItems.Select(oi => new OrderItemDto
+                {
+                    ProductId = oi.ProductId,
+                    Quantity = oi.Quantity,
+                    Price = oi.Price
+                }).ToList()
+            });
+        }
+    }
+}
+
+
+
+
+
+
+
+

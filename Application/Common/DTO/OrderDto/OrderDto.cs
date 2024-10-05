@@ -13,9 +13,8 @@ namespace ClothingBrand.Application.Common.DTO.OrderDto
         public decimal TotalPrice { get; set; }
         public string PaymentStatus { get; set; }
         public string OrderStatus { get; set; }
+        public string UserId { get; set; }
         public int ShippingId { get; set; }
-        public int UserId { get; set; }
         public List<OrderItemDto> OrderItems { get; set; }
-
     }
 }
