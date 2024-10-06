@@ -13,8 +13,8 @@ namespace ClothingBrand.Application.Common.Interfaces
         void Update(Order order);
 
         IEnumerable<Order> GetBy(
-   Expression<Func<Order, bool>> filter = null,
-   Func<IQueryable<Order>, IOrderedQueryable<Order>> orderBy = null,
-   string includeProperties = "");
+       Expression<Func<Order, bool>> filter = null,
+       Func<IQueryable<Order>, IOrderedQueryable<Order>> orderBy = null,
+       string includeProperties = "");
     }
 }

@@ -9,6 +9,12 @@ namespace ClothingBrand.Domain.Models
 {
     public class ApplicationUser : IdentityUser
     {
-        public string? Name { get; set; } 
+        public string? Name { get; set; }
+
+        public virtual ShoppingCart ShoppingCart { get; set; }
+        public virtual ICollection<Payment> Payments { get; set; } = new List<Payment>();
+        public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
+        public virtual ICollection<CustomClothingOrder> CustomClothingOrders { get; set; } = new List<CustomClothingOrder>();
+
     }
 }

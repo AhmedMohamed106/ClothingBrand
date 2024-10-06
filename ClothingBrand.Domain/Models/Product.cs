@@ -28,7 +28,7 @@ namespace ClothingBrand.Domain.Models
 
         public virtual ICollection<OrderItem> OrderItems { get; set; } // One-to-many with OrderItem
 
-       // public ICollection<ShoppingCartItem> ShoppingCartItems { get; set; } // One-to-many with ShoppingCartItem
+       public virtual ICollection<ShoppingCartItem> ShoppingCartItems { get; set; } // One-to-many with ShoppingCartItem
 
 
     }

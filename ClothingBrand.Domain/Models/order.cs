@@ -24,15 +24,16 @@ namespace ClothingBrand.Domain.Models
         // Foreign Key
         [ForeignKey("User")]
         public string UserId { get; set; }
-        public virtual ApplicationUser? User { get; set; }
+        public virtual ApplicationUser User { get; set; }
         public virtual Shipping? Shipping { get; set; } // One-to-one with Shipping
 
-        // Navigation property
-        public virtual ICollection<OrderItem>? OrderItems { get; set; }
+        [ForeignKey("Payment")]
+        public int PaymentId { get; set; }  // One-to-one relationship with Payment
+        public Payment Payment { get; set; }
 
-        [ForeignKey("ShoppingCart")]
-        public int ShoppingCartId { get; set; }  // Linking to the shopping cart that was checked out
-        public virtual ShoppingCart? ShoppingCart { get; set; }
+        // Navigation property
+        public virtual ICollection<OrderItem> OrderItems { get; set; }
+
 
     }
 

@@ -46,7 +46,6 @@ namespace ClothingBrand.Application.Services
                     OrderStatus = "Pending",
                     ShippingId = createOrderDto.ShippingId,
                     UserId = createOrderDto.UserId,
-                    ShoppingCartId = createOrderDto.ShoppingCartId,
                     OrderItems = shoppingCart.ShoppingCartItems.Select(item => new OrderItem
                     {
                         ProductId = item.ProductId,

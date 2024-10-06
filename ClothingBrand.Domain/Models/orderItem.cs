@@ -19,12 +19,12 @@ namespace ClothingBrand.Domain.Models
         // Foreign Key
         [ForeignKey("Order")]
         public int OrderId { get; set; }
-        public Order Order { get; set; }
+        public virtual Order Order { get; set; }   // An order item belongs to one order
 
         // Foreign Key
         [ForeignKey("Product")]
         public int ProductId { get; set; }
-        public virtual Product? Product { get; set; }
+        public virtual Product Product { get; set; }    // An order item is associated with one product
     }
 
 }
