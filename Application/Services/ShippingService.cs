@@ -44,11 +44,11 @@ namespace ClothingBrand.Application.Services
                  OrderItems = orderDto.OrderItems != null
                     ? orderDto.OrderItems.Select(orderItemDto => new OrderItem
                     {
-                        OrderItemId = orderItemDto.Id, // Assuming order items already exist
+                        OrderItemId = orderItemDto.OrderItemId, // Assuming order items already exist
                         ProductId = orderItemDto.ProductId,
                         Quantity = orderItemDto.Quantity,
                         Price = orderItemDto.Price,
-                        OrderId= orderItemDto.OrderId
+                        OrderId = orderItemDto.orderId
                         // Map any other properties as needed
                     }).ToList()
                     : new List<OrderItem>()
@@ -80,21 +80,53 @@ namespace ClothingBrand.Application.Services
                    UserId = order.UserId,
                    OrderItems = order.OrderItems.Select(orderItem => new OrderItemDto
                    {
-                       Id = orderItem.OrderItemId,
+                       OrderItemId = orderItem.OrderItemId,
                        ProductId = orderItem.ProductId,
                        Quantity = orderItem.Quantity,
                        Price = orderItem.Price,
-                       OrderId = orderItem.OrderId // Ensure this references the correct OrderId
+                       orderId = orderItem.OrderId // Ensure this references the correct OrderId
                    }).ToList()
+
                }).ToList()
             };
 
             return createdShippingDto;
         }
+        public IEnumerable<ShippingDto> GetAllShipping()
+        {
+            var shippings = _unitOfWork.shippingRepository.GetAll(includeProperties: "Orders");
+            return shippings.Select(shipping => new ShippingDto
+            {
+                Id = shipping.Id,
+                Address = shipping.Address,
+                City = shipping.City,
+                PostalCode = shipping.PostalCode,
+                PhoneNumber = shipping.PhoneNumber,
+                orders = shipping.Orders.Select(order => new OrderDto
+                {
+                    OrderId = order.OrderId,
+                    OrderDate = order.OrderDate,
+                    ShippingId = order.ShippingId,
+                    PaymentStatus = order.PaymentStatus,
+                    OrderStatus = order.OrderStatus,
+                    PaymentId = order.PaymentId,
+                    TotalPrice = order.TotalPrice,
+                    UserId = order.UserId,
+                    OrderItems = order.OrderItems.Select(orderItem => new OrderItemDto
+                    {
+                        OrderItemId = orderItem.OrderItemId,
+                        ProductId = orderItem.ProductId,
+                        Quantity = orderItem.Quantity,
+                        Price = orderItem.Price,
+                        orderId = orderItem.OrderId
+                    }).ToList()
+                }).ToList()
+            });
+        }
 
         public ShippingDto GetShippingById(int shippingId)
         {
-            var shipping = _unitOfWork.ShippingRepository.GetById(shippingId);
+            var shipping = _unitOfWork.shippingRepository.Get(p=>p.Id == shippingId);
 
             if (shipping == null)
             {
@@ -121,17 +153,90 @@ namespace ClothingBrand.Application.Services
                     UserId = order.UserId,
                     OrderItems = order.OrderItems.Select(orderItem => new OrderItemDto
                     {
-                        Id = orderItem.OrderItemId,
+                        OrderItemId = orderItem.OrderItemId,
                         ProductId = orderItem.ProductId,
                         Quantity = orderItem.Quantity,
                         Price = orderItem.Price,
-                        OrderId = orderItem.OrderId // Ensure this references the correct OrderId
+                        orderId = orderItem.OrderId // Ensure this references the correct OrderId
                     }).ToList()
 
                 }).ToList()
             };
 
             return shippingDto;
+        }
+
+        public ShippingDto UpdateShipping(int shippingId, ShippingDto shippingDto)
+        {
+            if (shippingDto == null)
+                throw new ArgumentNullException(nameof(shippingDto));
+
+            var shipping = _unitOfWork.shippingRepository.Get(
+                p => p.Id == shippingId,
+                includeProperties: "Orders.OrderItems");
+
+            if (shipping == null)
+                throw new KeyNotFoundException($"Shipping with ID {shippingId} not found.");
+
+            // Update shipping fields
+            shipping.Address = shippingDto.Address;
+            shipping.City = shippingDto.City;
+            shipping.PostalCode = shippingDto.PostalCode;
+            shipping.PhoneNumber = shippingDto.PhoneNumber;
+
+            // Optionally, update orders and order items if needed
+            // For simplicity, assuming orders are managed separately
+
+            _unitOfWork.shippingRepository.Update(shipping);
+            _unitOfWork.Save();
+
+            // Map to DTO
+            var updatedShippingDto = new ShippingDto
+            {
+                Id = shipping.Id,
+                Address = shipping.Address,
+                City = shipping.City,
+                PostalCode = shipping.PostalCode,
+                PhoneNumber = shipping.PhoneNumber,
+                orders = shipping.Orders.Select(order => new OrderDto
+                {
+                    OrderId = order.OrderId,
+                    OrderDate = order.OrderDate,
+                    ShippingId = order.ShippingId,
+                    PaymentStatus = order.PaymentStatus,
+                    OrderStatus = order.OrderStatus,
+                    PaymentId = order.PaymentId,
+                    TotalPrice = order.TotalPrice,
+                    UserId = order.UserId,
+                    OrderItems = order.OrderItems.Select(orderItem => new OrderItemDto
+                    {
+                        OrderItemId = orderItem.OrderItemId,
+                        ProductId = orderItem.ProductId,
+                        Quantity = orderItem.Quantity,
+                        Price = orderItem.Price,
+                        orderId = orderItem.OrderId
+                    }).ToList()
+                }).ToList()
+            };
+
+            return updatedShippingDto;
+        }
+
+        public void DeleteShipping(int shippingId)
+        {
+            var shipping = _unitOfWork.shippingRepository.Get(
+                p => p.Id == shippingId,
+                includeProperties: "Orders");
+
+            if (shipping == null)
+                throw new KeyNotFoundException($"Shipping with ID {shippingId} not found.");
+
+            // Optionally, check if there are any orders associated with this shipping
+            if (shipping.Orders != null && shipping.Orders.Any())
+                throw new InvalidOperationException("Cannot delete shipping because it has associated orders.");
+
+            _unitOfWork.shippingRepository.Remove(shipping);
+            _unitOfWork.Save();
         }
     }
 

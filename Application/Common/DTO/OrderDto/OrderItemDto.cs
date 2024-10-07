@@ -8,9 +8,12 @@ namespace ClothingBrand.Application.Common.DTO.OrderDto
 {
     public class OrderItemDto
     {
+        public int OrderItemId { get; set; }
         public int ProductId { get; set; }
         public int Quantity { get; set; }
         public decimal Price { get; set; }
+
+        public int orderId { get; set; }
     }
 
 }

@@ -16,10 +16,11 @@ namespace ClothingBrand.Domain.Models
         public string PaymentStatus { get; set; } // "Paid", "Unpaid"
 
         // Foreign Key (optional for different types of payments)
-        public int? OrderId { get; set; }
+        [ForeignKey("Order")]
+        public int OrderId { get; set; }
         public Order Order { get; set; }
-
-        public int UserId { get; set; }
+        [ForeignKey("User")]
+        public string UserId { get; set; }
         public virtual ApplicationUser User { get; set; }
     }
 

@@ -15,6 +15,8 @@ namespace ClothingBrand.Application.Common.DTO.OrderDto
         public string OrderStatus { get; set; }
         public string UserId { get; set; }
         public int ShippingId { get; set; }
+
+        public int PaymentId { get; set; }
         public List<OrderItemDto> OrderItems { get; set; }
     }
 }

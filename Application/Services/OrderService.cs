@@ -46,8 +46,10 @@ namespace ClothingBrand.Application.Services
                     OrderStatus = "Pending",
                     ShippingId = createOrderDto.ShippingId,
                     UserId = createOrderDto.UserId,
+                    PaymentId = createOrderDto.PaymentId,
                     OrderItems = shoppingCart.ShoppingCartItems.Select(item => new OrderItem
                     {
+                        
                         ProductId = item.ProductId,
                         Quantity = item.Quantity,
                         Price = item.Product.Price * item.Quantity
@@ -67,8 +69,11 @@ namespace ClothingBrand.Application.Services
                     OrderStatus = newOrder.OrderStatus,
                     UserId = newOrder.UserId,
                     ShippingId = newOrder.ShippingId,
+                    PaymentId = newOrder.PaymentId,
                     OrderItems = newOrder.OrderItems.Select(oi => new OrderItemDto
                     {
+                        OrderItemId = oi.OrderItemId,
+                        orderId = oi.OrderId,
                         ProductId = oi.ProductId,
                         Quantity = oi.Quantity,
                         Price = oi.Price
@@ -94,8 +99,11 @@ namespace ClothingBrand.Application.Services
                     OrderStatus = order.OrderStatus,
                     UserId = order.UserId,
                     ShippingId = order.ShippingId,
+                    PaymentId = order.PaymentId,
                     OrderItems = order.OrderItems.Select(oi => new OrderItemDto
                     {
+                        OrderItemId = oi.OrderItemId,
+                        orderId = oi.OrderId,
                         ProductId = oi.ProductId,
                         Quantity = oi.Quantity,
                         Price = oi.Price
@@ -142,8 +150,11 @@ namespace ClothingBrand.Application.Services
                     OrderStatus = order.OrderStatus,
                     UserId = order.UserId,
                     ShippingId = order.ShippingId,
+                    PaymentId = order.PaymentId,
                     OrderItems = order.OrderItems.Select(oi => new OrderItemDto
                     {
+                        OrderItemId = oi.OrderItemId,
+                        orderId = oi.OrderId,
                         ProductId = oi.ProductId,
                         Quantity = oi.Quantity,
                         Price = oi.Price
@@ -180,8 +191,11 @@ namespace ClothingBrand.Application.Services
                 OrderStatus = order.OrderStatus,
                 UserId = order.UserId,
                 ShippingId = order.ShippingId,
+                PaymentId = order.PaymentId,
                 OrderItems = order.OrderItems.Select(oi => new OrderItemDto
                 {
+                    OrderItemId = oi.OrderItemId,
+                    orderId = oi.OrderId,
                     ProductId = oi.ProductId,
                     Quantity = oi.Quantity,
                     Price = oi.Price

@@ -13,6 +13,7 @@ namespace ClothingBrand.Application.Common.DTO.OrderDto
         public int ShippingId { get; set; }
         public int ShoppingCartId { get; set; }  // Shopping cart ID to fetch items
 
+        public int PaymentId { get; set; }
     }
 
 }

@@ -11,6 +11,10 @@ namespace ClothingBrand.Application.Services
     {
         ShippingDto CreateShipping(ShippingDto shippingDto);
         ShippingDto GetShippingById(int shippingId);
+        IEnumerable<ShippingDto> GetAllShipping();
+        ShippingDto UpdateShipping(int shippingId, ShippingDto shippingDto);
+        void DeleteShipping(int shippingId);
+
     }
 
 }
