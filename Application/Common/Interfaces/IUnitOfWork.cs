@@ -19,6 +19,7 @@ namespace ClothingBrand.Application.Common.Interfaces
         ISewingCourseRepository sewingCourseRepository { get; }
         IShoppingCartItemRepository shoppingCartItemRepository { get; }
         IShoppingCartRepository shoppingCartRepository { get; }
+        IEnrollmentRepository enrollmentRepository { get; }
 
 
 

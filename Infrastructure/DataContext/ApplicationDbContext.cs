@@ -17,6 +17,12 @@ namespace ClothingBrand.Infrastructure.DataContext
 
 
         }
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            //base.OnModelCreating(builder);
+            builder.Entity<Enrollment>().HasKey(e=> new {e.SewingCourseId ,e.UserId});
+
+        }
         public DbSet<RefreshTocken> RefreshTokens { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<CustomClothingOrder> customClothingOrders { get; set; }

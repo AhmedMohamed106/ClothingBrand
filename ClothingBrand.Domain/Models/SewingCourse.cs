@@ -15,7 +15,7 @@ namespace ClothingBrand.Domain.Models
         public string Duration { get; set; }
 
         // Navigation Properties
-        public virtual ICollection<Enrollment> Enrollments { get; set; } // One-to-many with Enrollment
+        public virtual ICollection<ApplicationUser> EnrollmentUsers { get; set; } // One-to-many with Enrollment
     }
 
 }
