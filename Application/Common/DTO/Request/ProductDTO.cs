@@ -1,4 +1,5 @@
 ﻿using ClothingBrand.Domain.Models;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -13,7 +14,7 @@ namespace ClothingBrand.Application.Common.DTO.Request
         public string Name { get; set; }
         public string Description { get; set; }
         public decimal Price { get; set; }
-        public string ImageUrl { get; set; }
+        public IFormFile Image { get; set; }
         public int StockQuantity { get; set; }
         public string ISBN { get; set; }
 

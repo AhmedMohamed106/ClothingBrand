@@ -5,6 +5,7 @@ using ClothingBrand.Domain.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -12,14 +13,14 @@ namespace ClothingBrand.Application.Services
 {
     public interface IProductService
     {
-        public IEnumerable<GETProductDTO> GEtAll();
+        public IEnumerable<GETProductDTO> GetAll(Expression<Func<Product, bool>>? filter = null, string? includeProperties = null, bool tracked = false);
 
         public GETProductDTO GEtProduct(int id);
-        public void AddProduct(ProductDTO productDTO);
+        public  Task AddProduct(ProductDTO productDTO);
         public void Remove(int id);
 
 
-        public void update(int id, ProductDTO productDTO);
+        public Task update(int id, ProductDTO productDTO);
        
 
     }

@@ -10,9 +10,9 @@ namespace ClothingBrand.Web.Controllers
     public class CategoryController : ControllerBase
     {
         private readonly IcategoryService _CategoryService;
-        public CategoryController(IcategoryService productService)
+        public CategoryController(IcategoryService categoryService)
         {
-            _CategoryService = productService;
+            _CategoryService = categoryService;
         }
         [HttpGet]
         public IActionResult GetAll()

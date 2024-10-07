@@ -2,20 +2,31 @@
 using ClothingBrand.Application.Common.DTO.Response;
 using ClothingBrand.Application.Common.Interfaces;
 using ClothingBrand.Domain.Models;
-
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
+using System.Linq.Expressions;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace ClothingBrand.Application.Services
 {
     public class ProductService:IProductService
     {
-        private readonly IProductRepository _productRepository;
-        public ProductService(IProductRepository productRepository)
+        private readonly IUnitOfWork _unitRepository;
+        private string imagesPath;
+        private readonly IConfiguration _configuration;
+        private readonly string ApplicationUrl;
+
+        public ProductService(IUnitOfWork unitRepository, IConfiguration configuration)
         {
-            _productRepository = productRepository;
+            _unitRepository = unitRepository;
+            imagesPath = "/images/";
+            _configuration = configuration;
+            ApplicationUrl = _configuration["ApplicationUrl"];
         }
-        public IEnumerable<GETProductDTO> GEtAll()
+        public IEnumerable<GETProductDTO> GetAll(Expression<Func<Product, bool>>? filter = null, string? includeProperties = null, bool tracked = false)
         {
-            var iList= _productRepository.GetAll(includeProperties: "Category,Discount")
+            
+            var iList= _unitRepository.productRepository.GetAll(filter, "Category,Discount", tracked)
                 .Select(e=>new GETProductDTO
                 {
                     CategoryName=e.Category.Name,
@@ -24,7 +35,7 @@ namespace ClothingBrand.Application.Services
                     Discount= (decimal)(e.Discount!=null&&DateTime.Now<=e.Discount.EndDate&&DateTime.Now>=e.Discount.StartDate?e.Discount?.Percentage*e.Price:0),
                     Id=e.Id,
                     Price=e.Price,
-                    ImageUrl=e.ImageUrl,
+                    ImageUrl= ApplicationUrl+imagesPath + e.ImageUrl,
                     ISBN=e.ISBN,
                     StockQuantity=e.StockQuantity, 
 
@@ -34,7 +45,7 @@ namespace ClothingBrand.Application.Services
 
         public GETProductDTO GEtProduct(int id)
         {
-            var product = _productRepository.Get((x) => x.Id == id, includeProperties: "Category,Discount");
+            var product = _unitRepository.productRepository.Get((x) => x.Id == id, includeProperties: "Category,Discount");
 
             return new GETProductDTO
             {
@@ -44,7 +55,7 @@ namespace ClothingBrand.Application.Services
                 Discount = (decimal)(product.Discount != null && DateTime.Now <=product.Discount.EndDate && DateTime.Now >= product.Discount.StartDate ? product.Discount?.Percentage * product.Price : 0),
                 Id = product.Id,
                 Price = product.Price,
-                ImageUrl = product.ImageUrl,
+                ImageUrl = ApplicationUrl + imagesPath + product.ImageUrl,
                 ISBN = product.ISBN,
                 StockQuantity = product.StockQuantity,
 
@@ -52,35 +63,38 @@ namespace ClothingBrand.Application.Services
         }
 
 
-        public void AddProduct(ProductDTO productDTO)
+        public async Task AddProduct(ProductDTO productDTO)
         {
             var product = new Product()
             {
                 CategoryId = productDTO.CategoryId,
                 Name = productDTO.Name,
                 Description = productDTO.Description,
-                ImageUrl = productDTO.ImageUrl,
+                ImageUrl = await GeTImageUrlAsync(productDTO.Image),
                 ISBN = productDTO.ISBN,
                 StockQuantity = productDTO.StockQuantity,
                 Price = productDTO.Price,
                 DiscountId = productDTO.DiscountId,
 
             };
-            _productRepository.Add(product);
+            _unitRepository.productRepository.Add(product);
+            _unitRepository.Save();
         }
         public void Remove(int id)
         {
-            _productRepository.Remove(_productRepository.Get((x)=>x.Id==id));
+            _unitRepository.productRepository.Remove(_unitRepository.productRepository.Get((x)=>x.Id==id));
+            _unitRepository.Save();
+
 
         }
-        public void update(int id,ProductDTO productDTO)
+        public async Task update(int id,ProductDTO productDTO)
         {
             var product = new Product()
             {
                 CategoryId = productDTO.CategoryId,
                 Name = productDTO.Name,
                 Description = productDTO.Description,
-                ImageUrl = productDTO.ImageUrl,
+                ImageUrl = await GeTImageUrlAsync(productDTO.Image),
                 ISBN = productDTO.ISBN,
                 StockQuantity = productDTO.StockQuantity,
                 Price = productDTO.Price,
@@ -88,7 +102,26 @@ namespace ClothingBrand.Application.Services
                 Id = id
 
             };
-            _productRepository.Update(product);
+            
+            _unitRepository.productRepository.Update(product);
+            _unitRepository.Save();
+            File.Delete(GEtProduct(id).ImageUrl);
+
+        }
+
+        private async Task<string> GeTImageUrlAsync(IFormFile image)
+        {
+            string UniqueName = Guid.NewGuid().ToString() + "_" + image.FileName;
+            string filepath = "wwwroot"+imagesPath + UniqueName;
+            using (FileStream file = new FileStream(filepath, FileMode.Create))
+            {
+                await image.CopyToAsync(file);
+                file.Close();
+            }
+            return UniqueName;
+
+           
+
         }
 
     }

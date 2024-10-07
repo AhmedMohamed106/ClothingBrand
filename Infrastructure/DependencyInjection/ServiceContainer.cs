@@ -3,6 +3,7 @@ using ClothingBrand.Application.Common.Interfaces;
 using ClothingBrand.Application.Services;
 using ClothingBrand.Domain.Models;
 using ClothingBrand.Infrastructure.DataContext;
+using ClothingBrand.Infrastructure.Emails;
 using ClothingBrand.Infrastructure.Repository;
 using infrastructure.Repos;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -10,6 +11,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
@@ -39,8 +41,11 @@ namespace infrastructure.DependencyInjection
 
                 op.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 op.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                op.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
             }).AddJwtBearer(opt =>
             {
+                opt.SaveToken = true;
+                opt.RequireHttpsMetadata = false;
                 opt.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
                 {
                     ValidateIssuer = true,
@@ -63,7 +68,7 @@ namespace infrastructure.DependencyInjection
            services.AddScoped<IProductRepository,ProductRepository>();
             services.AddScoped<ICategoryRepository, CategoryRepository>();
             services.AddScoped<IDiscountRepository, DiscountRepository>();
-
+            services.Configure<MailSettings>(config.GetSection("MailSettings"));
 
             return services;
         }

@@ -24,4 +24,8 @@
     <ProjectReference Include="..\Infrastructure\ClothingBrand.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\images\" />
+  </ItemGroup>
+
 </Project>
