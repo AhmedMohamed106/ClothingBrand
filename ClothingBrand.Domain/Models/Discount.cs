@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace ClothingBrand.Domain.Models
@@ -15,6 +16,7 @@ namespace ClothingBrand.Domain.Models
         public DateTime EndDate { get; set; }
 
         // Navigation property
+        [JsonIgnore]
         public virtual ICollection<Product>? Products { get; set; }
     }
 

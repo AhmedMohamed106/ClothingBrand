@@ -9,7 +9,7 @@ namespace ClothingBrand.Application.Contract
 {
     public interface IEmailService
     {
-        //Task<bool> SendEmailAsync(string mailTo, string subject, string body, IList<IFormFile> attachments = null);
-        Task SendEmailAsync(string toEmail, string subject, string message);
+        Task<bool> SendEmailAsync(string mailTo = null, string subject = null, string body = null, IList<IFormFile> attachments = null);
+       // Task SendEmailAsync(string toEmail, string subject, string message);
     }
 }

@@ -51,6 +51,13 @@ namespace ClothingBrand.Web.Controllers
             return Ok(products);
         }
 
+        [HttpDelete]
+        public IActionResult Remove(int id)
+        {
+            _productService.Remove(id);
+            return Ok();
+        }
+
         [HttpGet("Filtering")]
         public IActionResult Filtering(string CategoryName = null, decimal Maxprice = 0, decimal MinPrice = 0, string KeyWord = null)
         {
@@ -132,12 +139,18 @@ namespace ClothingBrand.Web.Controllers
             return BadRequest();
 
         }
-        //[HttpPost("send")]
-        //public async Task<IActionResult> SendMail([FromForm] MailRequestDto dto)
-        //{
-        //    await _mailingService.SendEmailAsync(dto.ToEmail, dto.Subject, dto.Body);
-        //    return Ok();
-        //}
+        [HttpPost("send")]
+        public async Task<IActionResult> SendMail([FromForm] MailRequestDto dto)
+        {
+            //var filePath = $"{Directory.GetCurrentDirectory()}\\Templates\\EmailTemplate.html";
+            //var str = new StreamReader(filePath);
+
+            //var mailText = str.ReadToEnd();
+            //str.Close();
+            //mailText = mailText.Replace("[username]", dto.Subject).Replace("[email]", dto.ToEmail);
+            await _mailingService.SendEmailAsync(dto.ToEmail, dto.Subject, dto.Body,dto.Attachments);
+            return Ok();
+        }
 
     }
 }

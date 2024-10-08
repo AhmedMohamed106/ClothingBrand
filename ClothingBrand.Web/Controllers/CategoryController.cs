@@ -44,5 +44,11 @@ namespace ClothingBrand.Web.Controllers
             var products = _CategoryService.GEtCategory(id);
             return Ok(products);
         }
+        [HttpDelete]
+        public IActionResult Remove(int id)
+        {
+            _CategoryService.Remove(id);
+            return Ok();
+        }
     }
 }

@@ -33,8 +33,15 @@ namespace infrastructure.DependencyInjection
             });
 
 
-            services.AddIdentityCore<ApplicationUser>().AddRoles<IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>().AddSignInManager();
-
+          //  services.AddIdentityCore<ApplicationUser>(opt=>opt.SignIn.RequireConfirmedEmail=true).AddRoles<IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>().AddSignInManager();
+          services.AddIdentity<ApplicationUser,IdentityRole>(options =>
+          {
+              options.SignIn.RequireConfirmedEmail = true;
+          }).AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
+         services.Configure<DataProtectionTokenProviderOptions>(options =>
+            {
+                options.TokenLifespan = TimeSpan.FromDays(3); // Extend to 3 days
+            });
 
             services.AddAuthentication(op =>
             {
