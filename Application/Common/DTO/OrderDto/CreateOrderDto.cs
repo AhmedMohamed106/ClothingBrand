@@ -10,9 +10,7 @@ namespace ClothingBrand.Application.Common.DTO.OrderDto
     public class CreateOrderDto
     {
         public string UserId { get; set; }
-        public int ShippingId { get; set; }
         public int ShoppingCartId { get; set; }  // Shopping cart ID to fetch items
-
         public int PaymentId { get; set; }
     }
 

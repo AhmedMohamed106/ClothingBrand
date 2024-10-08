@@ -8,14 +8,16 @@ namespace ClothingBrand.Domain.Models
 {
     public class Shipping
     {
-        public int Id { get; set; }
-        public string Address { get; set; }
+        public int ShippingId { get; set; }
+        public string AddressLine1 { get; set; }
+        public string AddressLine2 { get; set; }
         public string City { get; set; }
-        public string? PostalCode { get; set; }
-        public string PhoneNumber { get; set; }
+        public string State { get; set; }
+        public string PostalCode { get; set; }
+        public string Country { get; set; }
+        public string ShippingMethod { get; set; } // E.g., "Standard", "Express"
+        public decimal ShippingCost { get; set; }
 
-        // Navigation Properties
-        public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
     }
 
 }

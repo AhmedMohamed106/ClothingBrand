@@ -1,6 +1,6 @@
 using ClothingBrand.Application.Services;
-
-using infrastructure.DependencyInjection;
+using ClothingBrand.Application.Settings;
+using ClothingBrand.Infrastructure.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 
 namespace ClothingBrand.Web

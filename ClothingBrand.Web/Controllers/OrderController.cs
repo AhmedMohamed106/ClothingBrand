@@ -1,9 +1,12 @@
 ﻿using ClothingBrand.Application.Common.DTO.OrderDto;
+using ClothingBrand.Application.Common.Interfaces;
 using ClothingBrand.Application.Services;
-using Microsoft.AspNetCore.Http;
+using ClothingBrand.Web.helpers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 
-namespace ClothingBrand.Web.Controllers
+namespace ClothingBrand.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -16,105 +19,167 @@ namespace ClothingBrand.Web.Controllers
             _orderService = orderService;
         }
 
-        // POST: api/order
-        [HttpPost]
-        public IActionResult CreateOrder([FromBody] CreateOrderDto createOrderDto)
+        //// POST: api/order/create
+        //[HttpPost("create")]
+        //[Authorize]
+        //public ActionResult<OrderDto> CreateOrder([FromBody] CreateOrderRequest request)
+        //{
+        //    // Customize the request as needed based on your requirements
+        //    var order = _orderService.CreateOrder(request.UserId, request.ShoppingCart, request.ShippingDetails);
+        //    return CreatedAtAction(nameof(GetOrderById), new { orderId = order.OrderId }, order);
+        //}
+
+        // GET: api/order
+        [HttpGet]
+        [Authorize]
+        public ActionResult<IEnumerable<OrderSummaryDto>> GetOrders()
         {
-            try
+            var orders = _orderService.GetOrders();
+            var orderSummaries = new List<OrderSummaryDto>();
+
+            foreach (var order in orders)
             {
-                var order =  _orderService.CreateOrder(createOrderDto);
-                return Ok(order);
+                var orderSummary = new OrderSummaryDto
+                {
+                    OrderDate = order.OrderDate,
+                    TotalPrice = order.TotalPrice,
+                    PaymentStatus = order.PaymentStatus,
+                    OrderStatus = order.OrderStatus,
+                    AddressLine1 = order.ShippingDetails.AddressLine1,
+                    AddressLine2 = order.ShippingDetails.AddressLine2,
+                    City = order.ShippingDetails.City,
+                    State = order.ShippingDetails.State,
+                    PostalCode = order.ShippingDetails.PostalCode,
+                    Country = order.ShippingDetails.Country,
+                    OrderItems = new List<ItemDto>()
+                };
+
+                foreach (var item in order.OrderItems)
+                {
+                    orderSummary.OrderItems.Add(new ItemDto
+                    {
+                        Quantity = item.Quantity,
+                        Price = item.Price,
+                        ProductName = item.ProductName
+                    });
+                }
+
+                orderSummaries.Add(orderSummary);
             }
-            catch (Exception ex)
-            {
-                return BadRequest(new { message = ex.Message });
-            }
+
+            return Ok(orderSummaries);
         }
 
-        // GET: api/order/{id}
-        [HttpGet("{id}")]
-        public IActionResult GetOrderById(int id)
+        [HttpGet("{orderId}")]
+        [Authorize]
+        public ActionResult<OrderSummaryDto> GetOrderById(int orderId)
         {
-            try
+            var order = _orderService.GetOrderById(orderId);
+            if (order == null)
             {
-                var order =  _orderService.GetOrderById(id);
-                return Ok(order);
+                return NotFound(); // Return 404 if the order is not found
             }
-            catch (Exception ex)
+
+            var orderSummary = new OrderSummaryDto
             {
-                return NotFound(new { message = ex.Message });
+                OrderDate = order.OrderDate,
+                TotalPrice = order.TotalPrice,
+                PaymentStatus = order.PaymentStatus,
+                OrderStatus = order.OrderStatus,
+                AddressLine1 = order.ShippingDetails.AddressLine1,
+                AddressLine2 = order.ShippingDetails.AddressLine2,
+                City = order.ShippingDetails.City,
+                State = order.ShippingDetails.State,
+                PostalCode = order.ShippingDetails.PostalCode,
+                Country = order.ShippingDetails.Country,
+                OrderItems = new List<ItemDto>() // Updated class name
+            };
+
+            foreach (var item in order.OrderItems)
+            {
+                orderSummary.OrderItems.Add(new ItemDto // Updated class name
+                {
+                    Quantity = item.Quantity,
+                    Price = item.Price,
+                    ProductName = item.ProductName
+                });
             }
+
+            return Ok(orderSummary);
         }
+
 
         // PUT: api/order/{id}/status
-        [HttpPut("{id}/status")]
-        public IActionResult UpdateOrderStatus(int id, UpdateOrderStatusDto orderstatusdto)
+        [HttpPut("{orderId}/status")]
+        [Authorize]
+        public ActionResult UpdateOrderStatus(int orderId, [FromBody] UpdateOrderStatusDto dto)
         {
-            try
-            {
-                 _orderService.UpdateOrderStatus(id, orderstatusdto);
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { message = ex.Message });
-            }
+            _orderService.UpdateOrderStatus(orderId, dto);
+            return NoContent();
         }
 
         // PUT: api/order/{id}/payment-status
-        [HttpPut("{id}/payment-status")]
-        public IActionResult UpdatePaymentStatus(int id, [FromBody] string paymentStatus)
+        [HttpPut("{orderId}/payment-status")]
+        [Authorize]
+        public ActionResult UpdatePaymentStatus(int orderId, [FromBody] string paymentStatus)
         {
-            try
-            {
-                 _orderService.UpdatePaymentStatus(id, paymentStatus);
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { message = ex.Message });
-            }
+            _orderService.UpdatePaymentStatus(orderId, paymentStatus);
+            return NoContent();
         }
 
-        // GET: api/order/user/{userId}
         [HttpGet("user/{userId}")]
-        public IActionResult GetUserOrders(string userId)
+        [Authorize]
+        public ActionResult<IEnumerable<OrderSummaryDto>> GetUserOrders(string userId)
         {
-            try
+            var orders = _orderService.GetUserOrders(userId);
+            var orderSummaries = new List<OrderSummaryDto>();
+
+            foreach (var order in orders)
             {
-                var orders =  _orderService.GetUserOrders(userId);
-                return Ok(orders);
+                var orderSummary = new OrderSummaryDto
+                {
+                    OrderDate = order.OrderDate,
+                    TotalPrice = order.TotalPrice,
+                    PaymentStatus = order.PaymentStatus,
+                    OrderStatus = order.OrderStatus,
+                    AddressLine1 = order.ShippingDetails.AddressLine1,
+                    AddressLine2 = order.ShippingDetails.AddressLine2,
+                    City = order.ShippingDetails.City,
+                    State = order.ShippingDetails.State,
+                    PostalCode = order.ShippingDetails.PostalCode,
+                    Country = order.ShippingDetails.Country,
+                    OrderItems = new List<ItemDto>() // Updated class name
+                };
+
+                foreach (var item in order.OrderItems)
+                {
+                    orderSummary.OrderItems.Add(new ItemDto // Updated class name
+                    {
+                        Quantity = item.Quantity,
+                        Price = item.Price,
+                        ProductName = item.ProductName
+                    });
+                }
+
+                orderSummaries.Add(orderSummary);
             }
-            catch (Exception ex)
-            {
-                return BadRequest(new { message = ex.Message });
-            }
+
+            return Ok(orderSummaries);
         }
 
-        [HttpGet]
-        public ActionResult<IEnumerable<OrderDto>> GetOrders()
-        {
-            var orders = _orderService.GetOrders();
 
-            if (orders == null || !orders.Any())
-            {
-                return NotFound(); // Return 404 if no orders found
-            }
-
-            return Ok(orders); // Return 200 with orders data
-        }
-
-        [HttpPost("{orderId}/cancel")]
+        // DELETE: api/order/{id}/cancel
+        [HttpDelete("{orderId}/cancel")]
+        [Authorize]
         public ActionResult CancelOrder(int orderId)
         {
             var result = _orderService.CancelOrder(orderId);
-
             if (!result)
             {
-                return NotFound(); // Return 404 if the order is not found or not cancellable
+                return NotFound();
             }
 
-            return NoContent(); // Return 204 No Content if cancellation is successful
+            return NoContent();
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ClothingBrand.Application.Common.DTO.Response.Shipping;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,9 +15,12 @@ namespace ClothingBrand.Application.Common.DTO.OrderDto
         public string PaymentStatus { get; set; }
         public string OrderStatus { get; set; }
         public string UserId { get; set; }
-        public int ShippingId { get; set; }
-
-        public int PaymentId { get; set; }
+        public ShippingDto ShippingDetails { get; set; } // Include Shipping details
         public List<OrderItemDto> OrderItems { get; set; }
+
+        public OrderDto()
+        {
+            OrderItems = new List<OrderItemDto>();
+        }
     }
 }

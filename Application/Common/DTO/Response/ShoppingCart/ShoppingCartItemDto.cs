@@ -12,7 +12,7 @@ namespace ClothingBrand.Application.Common.DTO.Response.ShoppingCart
         public int ShoppingCartId { get; set; }
         public int ProductId { get; set; }
         public string ProductName { get; set; }
-        public decimal Price { get; set; }
+        public decimal Price { get; set; } 
         public int Quantity { get; set; }
     }
 }
