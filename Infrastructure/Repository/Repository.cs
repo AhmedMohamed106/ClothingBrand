@@ -25,6 +25,7 @@ namespace ClothingBrand.Infrastructure.Repository
         {
             dbSet.Add(entity);
             _db.SaveChanges();
+            
            
         }
 

@@ -18,8 +18,15 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using ClothingBrand.Infrastructure.Emails;
 
-namespace ClothingBrand.Infrastructure.Repository
+using System.Security.Policy;
+using Microsoft.AspNetCore.Http;
+using ClothingBrand.Application.Contract;
+using System.Net;
+using Microsoft.AspNetCore.WebUtilities;
+
+namespace infrastructure.Repos
 {
     public class AccountRepository : IAccount
     {
@@ -29,17 +36,20 @@ namespace ClothingBrand.Infrastructure.Repository
         private IConfiguration config;
         private ApplicationDbContext _context;
         private SignInManager<ApplicationUser> signInManager;
+        private readonly IHttpContextAccessor _contextAccessor;
+        private readonly IEmailService _emailService;
 
         public AccountRepository(RoleManager<IdentityRole> roleManager,
           UserManager<ApplicationUser> userManager, IConfiguration config, ApplicationDbContext context,
-          SignInManager<ApplicationUser> signInManager)
+          SignInManager<ApplicationUser> signInManager, IHttpContextAccessor contextAccessor, IEmailService emailService)
         {
             this.roleManager = roleManager;
             this.userManager = userManager;
             this.config = config;
             this.signInManager = signInManager;
-            _context = context;
-
+            this._context = context;
+            _contextAccessor = contextAccessor;
+            _emailService = emailService;
         }
         private async Task<ApplicationUser> FindUserByEmailAsync(string email) => await userManager.FindByEmailAsync(email);
         private async Task<IdentityRole> FindRoleByNameAsync(string user) => await roleManager.FindByNameAsync(user);
@@ -137,7 +147,9 @@ namespace ClothingBrand.Infrastructure.Repository
                     return new GeneralResponse(false, error);
 
                 }
-                return await AssignUserToRoleAsync(user, new IdentityRole() { Name = model.Role });
+              //  await SendConfirmationEmail(user);
+                
+              return  await AssignUserToRoleAsync(user,new IdentityRole() { Name=model.Role });
 
 
             }
@@ -252,7 +264,7 @@ namespace ClothingBrand.Infrastructure.Repository
                     await _context.RefreshTokens.AddAsync(new RefreshTocken() { UserID = userID, Token = token });
                 else
                     user.Token = token;
-                await _context.SaveChangesAsync();
+              //  await _context.SaveChangesAsync();
                 return new GeneralResponse { flag = true };
             }
             catch (Exception ex)
@@ -260,5 +272,52 @@ namespace ClothingBrand.Infrastructure.Repository
                 return new GeneralResponse { flag = true, message = ex.Message };
             }
         }
+
+
+
+
+        //remove in after Development
+        public async Task SendEmail(string userId)
+        {
+            var user= await userManager.FindByIdAsync(userId);
+         //   await SendConfirmationEmail(user);
+        }
+
+
+
+        public async Task<GeneralResponse> RemoveUser(string id)
+        {
+            var user = await userManager.FindByIdAsync(id);
+            if (user == null)
+            {
+                return new GeneralResponse(false,"User not Found");
+               
+            }
+
+            var result = await userManager.DeleteAsync(user);
+            if (result.Succeeded)
+            {
+                return new GeneralResponse(true, "User deleted successfully");
+            }
+            string error="";
+            foreach (var item in result.Errors)
+            {
+                error += item.Description;
+            }
+            return new GeneralResponse() {flag=false, message = error };
+        }
+
+
+        public async Task<GeneralResponse> LogOut(string userId)
+        {
+              
+            var refreshTokens = await _context.RefreshTokens
+                                     .Where(t => t.UserID == userId )
+                                     .FirstOrDefaultAsync();
+            _context.RefreshTokens.Remove(refreshTokens);
+            await signInManager.SignOutAsync();
+             return new GeneralResponse(true, "User deleted successfully");
+        }
+
     }
 }

@@ -34,7 +34,7 @@ namespace ClothingBrand.Infrastructure.Repository
                     objFromDb.ImageUrl = obj.ImageUrl;
                 }
             }
-            _db.SaveChanges();
+           
 
         }
 

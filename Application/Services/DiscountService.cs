@@ -13,14 +13,14 @@ namespace ClothingBrand.Application.Services
     public class DiscountService:IDiscountService
     {
        
-            private readonly IDiscountRepository _discountRepository;
-            public DiscountService(IDiscountRepository discountRepository)
+            private readonly IUnitOfWork _unitRepository;
+            public DiscountService(IUnitOfWork unitRepository)
             {
-                _discountRepository = discountRepository;
+                _unitRepository = unitRepository;
             }
             public IEnumerable<Discount> GEtAll()
             {
-                var iList = _discountRepository.GetAll(includeProperties: "Products")
+                var iList = _unitRepository.discountRepository.GetAll(includeProperties: "Products")
                     .Select(e => new Discount
                     {
 
@@ -38,7 +38,7 @@ namespace ClothingBrand.Application.Services
 
             public Discount GEtDiscount(int id)
             {
-                var category = _discountRepository.Get((x) => x.Id == id, includeProperties: "Products");
+                var category = _unitRepository.discountRepository.Get((x) => x.Id == id, includeProperties: "Products");
 
                 var cage = new Discount
                 {
@@ -73,11 +73,11 @@ namespace ClothingBrand.Application.Services
 
 
                 };
-                _discountRepository.Add(catg);
+                _unitRepository.discountRepository.Add(catg);
             }
             public void Remove(int id)
             {
-                _discountRepository.Remove(_discountRepository.Get((x) => x.Id == id));
+                _unitRepository.discountRepository.Remove(_unitRepository.discountRepository.Get((x) => x.Id == id));
 
             }
             public void update(int id, CreateDiscountDTO discountDto)
@@ -94,7 +94,7 @@ namespace ClothingBrand.Application.Services
                     Id = id
 
                 };
-                _discountRepository.Update(discount);
+                _unitRepository.discountRepository.Update(discount);
             }
         }
     

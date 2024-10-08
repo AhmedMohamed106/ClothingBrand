@@ -4,12 +4,14 @@ using ClothingBrand.Application.Services;
 using ClothingBrand.Application.Settings;
 using ClothingBrand.Domain.Models;
 using ClothingBrand.Infrastructure.DataContext;
+using ClothingBrand.Infrastructure.Emails;
 using ClothingBrand.Infrastructure.Repository;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
@@ -32,18 +34,27 @@ namespace ClothingBrand.Infrastructure.DependencyInjection
 
             services.Configure<StripeSettings>(config.GetSection("Stripe"));
 
-
-            services.AddIdentityCore<ApplicationUser>().AddRoles<IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>().AddSignInManager();
-
+          //  services.AddIdentityCore<ApplicationUser>(opt=>opt.SignIn.RequireConfirmedEmail=true).AddRoles<IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>().AddSignInManager();
+          services.AddIdentity<ApplicationUser,IdentityRole>(options =>
+          {
+              options.SignIn.RequireConfirmedEmail = true;
+          }).AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
+         services.Configure<DataProtectionTokenProviderOptions>(options =>
+            {
+                options.TokenLifespan = TimeSpan.FromDays(3); // Extend to 3 days
+            });
 
             services.AddAuthentication(op =>
             {
 
                 op.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 op.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                op.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
             }).AddJwtBearer(opt =>
             {
-                opt.TokenValidationParameters = new TokenValidationParameters
+                opt.SaveToken = true;
+                opt.RequireHttpsMetadata = false;
+                opt.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
                 {
                     ValidateIssuer = true,
                     ValidateAudience = true,
@@ -72,7 +83,7 @@ namespace ClothingBrand.Infrastructure.DependencyInjection
             services.AddScoped<IProductRepository, ProductRepository>();
             services.AddScoped<ICategoryRepository, CategoryRepository>();
             services.AddScoped<IDiscountRepository, DiscountRepository>();
-
+            services.Configure<MailSettings>(config.GetSection("MailSettings"));
 
             return services;
         }

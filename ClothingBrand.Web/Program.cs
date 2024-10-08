@@ -1,7 +1,11 @@
+using ClothingBrand.Application.Contract;
 using ClothingBrand.Application.Services;
 using ClothingBrand.Application.Settings;
 using ClothingBrand.Infrastructure.DependencyInjection;
+using ClothingBrand.Infrastructure.Emails;
+using infrastructure.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace ClothingBrand.Web
 {
@@ -27,15 +31,19 @@ namespace ClothingBrand.Web
             builder.Services.AddScoped<IcategoryService, CategoryService>();
             builder.Services.AddScoped<IProductService, ProductService>();
             builder.Services.AddScoped<IDiscountService, DiscountService>();
+           
 
+            builder.Services.AddTransient<IEmailService, EmailService>();
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
+                
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+            app.UseStaticFiles();   
             app.UseCors("Clean");
 
             app.UseHttpsRedirection();

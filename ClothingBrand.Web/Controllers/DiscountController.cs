@@ -44,5 +44,11 @@ namespace ClothingBrand.Web.Controllers
                 var discount = _discountService.GEtDiscount(id);
                 return Ok(discount);
             }
+        [HttpDelete]
+        public IActionResult Remove(int id)
+        {
+            _discountService.Remove(id);
+            return Ok();
         }
+    }
 }

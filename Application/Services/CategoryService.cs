@@ -12,14 +12,14 @@ namespace ClothingBrand.Application.Services
 {
     public class CategoryService : IcategoryService
     {
-        private readonly ICategoryRepository _categoryRepository;
-        public CategoryService(ICategoryRepository categoryRepository)
+        private readonly IUnitOfWork _unitRepository;
+        public CategoryService(IUnitOfWork unitRepository)
         {
-            _categoryRepository = categoryRepository;
+           _unitRepository = unitRepository;
         }
         public IEnumerable<GEtCategoryDTO> GEtAll()
         {
-            var iList = _categoryRepository.GetAll(includeProperties: "Products")
+            var iList =_unitRepository.categoryRepository.GetAll(includeProperties: "Products")
                 .Select(e => new GEtCategoryDTO
                 {
                    
@@ -34,7 +34,7 @@ namespace ClothingBrand.Application.Services
 
         public GEtCategoryDTO GEtCategory(int id)
         {
-            var category = _categoryRepository.Get((x) => x.Id == id, includeProperties: "Products");
+            var category =_unitRepository.categoryRepository.Get((x) => x.Id == id, includeProperties: "Products");
 
             var cage= new GEtCategoryDTO
             {
@@ -62,11 +62,11 @@ namespace ClothingBrand.Application.Services
               
 
             };
-            _categoryRepository.Add(catg);
+           _unitRepository.categoryRepository.Add(catg);
         }
         public void Remove(int id)
         {
-            _categoryRepository.Remove(_categoryRepository.Get((x) => x.Id == id));
+           _unitRepository.categoryRepository.Remove(_unitRepository.categoryRepository.Get((x) => x.Id == id));
 
         }
         public void update(int id, CreateCategoryDto categoryDto)
@@ -79,7 +79,7 @@ namespace ClothingBrand.Application.Services
                 Id = id
 
             };
-            _categoryRepository.Update(category);
+           _unitRepository.categoryRepository.Update(category);
         }
     }
 }
