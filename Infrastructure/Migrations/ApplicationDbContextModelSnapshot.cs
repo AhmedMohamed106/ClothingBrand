@@ -195,21 +195,18 @@ namespace ClothingBrand.Infrastructure.Migrations
 
             modelBuilder.Entity("ClothingBrand.Domain.Models.Enrollment", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<int>("SewingCourseId")
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<string>("ApplicationUserId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("EnrollDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("SewingCourseId")
-                        .HasColumnType("int");
+                    b.HasKey("SewingCourseId", "ApplicationUserId");
 
-                    b.HasKey("Id");
-
-                    b.HasIndex("SewingCourseId");
+                    b.HasIndex("ApplicationUserId");
 
                     b.ToTable("Enrollments");
                 });
@@ -632,8 +629,10 @@ namespace ClothingBrand.Infrastructure.Migrations
             modelBuilder.Entity("ClothingBrand.Domain.Models.CustomClothingOrder", b =>
                 {
                     b.HasOne("ClothingBrand.Domain.Models.ApplicationUser", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId");
+                        .WithMany("CustomClothingOrders")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("User");
                 });
@@ -659,27 +658,17 @@ namespace ClothingBrand.Infrastructure.Migrations
 
             modelBuilder.Entity("ClothingBrand.Domain.Models.Order", b =>
                 {
-                    b.HasOne("ClothingBrand.Domain.Models.Shipping", "Shipping")
-                        .WithOne("Order")
-                        .HasForeignKey("ClothingBrand.Domain.Models.Order", "ShippingId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ClothingBrand.Domain.Models.ShoppingCart", "ShoppingCart")
+                    b.HasOne("ClothingBrand.Domain.Models.Shipping", "ShippingDetails")
                         .WithMany()
-                        .HasForeignKey("ShoppingCartId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ShippingDetailsShippingId");
 
                     b.HasOne("ClothingBrand.Domain.Models.ApplicationUser", "User")
-                        .WithMany()
+                        .WithMany("Orders")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Shipping");
-
-                    b.Navigation("ShoppingCart");
+                    b.Navigation("ShippingDetails");
 
                     b.Navigation("User");
                 });
@@ -707,9 +696,19 @@ namespace ClothingBrand.Infrastructure.Migrations
                 {
                     b.HasOne("ClothingBrand.Domain.Models.Order", "Order")
                         .WithMany()
-                        .HasForeignKey("OrderId");
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ClothingBrand.Domain.Models.ApplicationUser", "User")
+                        .WithMany("Payments")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Order");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("ClothingBrand.Domain.Models.Product", b =>
@@ -731,10 +730,21 @@ namespace ClothingBrand.Infrastructure.Migrations
                     b.Navigation("Discount");
                 });
 
+            modelBuilder.Entity("ClothingBrand.Domain.Models.ShoppingCart", b =>
+                {
+                    b.HasOne("ClothingBrand.Domain.Models.ApplicationUser", "User")
+                        .WithOne("ShoppingCart")
+                        .HasForeignKey("ClothingBrand.Domain.Models.ShoppingCart", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("ClothingBrand.Domain.Models.ShoppingCartItem", b =>
                 {
                     b.HasOne("ClothingBrand.Domain.Models.Product", "Product")
-                        .WithMany()
+                        .WithMany("ShoppingCartItems")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -804,6 +814,8 @@ namespace ClothingBrand.Infrastructure.Migrations
             modelBuilder.Entity("ClothingBrand.Domain.Models.ApplicationUser", b =>
                 {
                     b.Navigation("CustomClothingOrders");
+
+                    b.Navigation("Enrollments");
 
                     b.Navigation("Orders");
 
