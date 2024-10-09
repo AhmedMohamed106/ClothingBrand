@@ -30,10 +30,8 @@ namespace ClothingBrand.Infrastructure.Repository
         public IShoppingCartItemRepository shoppingCartItemRepository { get; private set; }
 
         public IShoppingCartRepository shoppingCartRepository { get; private set; }
-        public IEnrollmentRepository EnrollmentRepository { get; private set; }
 
-
-
+        public IEnrollmentRepository enrollmentRepository { get; private set; }
 
         public UnitOfWork(ApplicationDbContext _db)
         {
@@ -48,7 +46,7 @@ namespace ClothingBrand.Infrastructure.Repository
             sewingCourseRepository = new SewingCourseRepository(_db);
             shoppingCartItemRepository = new ShoppingCartItemRepository(_db);
             shoppingCartRepository = new ShoppingCartRepository(_db);
-            EnrollmentRepository = new EnrollmentRepository(_db);   
+            enrollmentRepository = new EnrollmentRepository(_db);   
 
 
 

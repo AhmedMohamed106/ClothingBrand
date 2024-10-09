@@ -1,4 +1,5 @@
-﻿using ClothingBrand.Application.Common.Interfaces;
+﻿using ClothingBrand.Application.Common.DTO.course;
+using ClothingBrand.Application.Common.Interfaces;
 using ClothingBrand.Domain.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -19,7 +20,12 @@ namespace ClothingBrand.Web.Controllers
         public IActionResult GetAll()
         {
             var courses = unitOfWork.sewingCourseRepository.GetAll();
-            return Ok(courses);
+            var courseDTO=new List<courseDto>();
+            foreach (var course in courses) {
+                courseDTO.Add(new courseDto {Id=course.Id,Title=course.Title,Description=course.Description,Price=course.Price ,Duration=course.Duration});
+            }
+
+            return Ok(courseDTO);
         }
         [HttpPost]
         public IActionResult Create(SewingCourse course)

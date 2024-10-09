@@ -21,7 +21,7 @@ namespace ClothingBrand.Infrastructure.Repository
 
         public void Update(Order order)
         {
-            _db.Orders.Update(order);
+            //_db.Orders.Update(order);
         }
     }
 }
