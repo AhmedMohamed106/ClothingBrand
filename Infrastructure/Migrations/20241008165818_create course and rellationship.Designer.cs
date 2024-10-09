@@ -4,6 +4,7 @@ using ClothingBrand.Infrastructure.DataContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ClothingBrand.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241008165818_create course and rellationship")]
+    partial class createcourseandrellationship
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -152,7 +155,6 @@ namespace ClothingBrand.Infrastructure.Migrations
                         .HasColumnType("float");
 
                     b.Property<string>("UserId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<double>("WaistCircumference")
@@ -190,26 +192,23 @@ namespace ClothingBrand.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Discounts");
+                    b.ToTable("Discount");
                 });
 
             modelBuilder.Entity("ClothingBrand.Domain.Models.Enrollment", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<int>("SewingCourseId")
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<string>("ApplicationUserId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("EnrollDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("SewingCourseId")
-                        .HasColumnType("int");
+                    b.HasKey("SewingCourseId", "ApplicationUserId");
 
-                    b.HasKey("Id");
-
-                    b.HasIndex("SewingCourseId");
+                    b.HasIndex("ApplicationUserId");
 
                     b.ToTable("Enrollments");
                 });
@@ -233,7 +232,10 @@ namespace ClothingBrand.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("ShippingDetailsShippingId")
+                    b.Property<int>("ShippingId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ShoppingCartId")
                         .HasColumnType("int");
 
                     b.Property<decimal>("TotalPrice")
@@ -245,11 +247,14 @@ namespace ClothingBrand.Infrastructure.Migrations
 
                     b.HasKey("OrderId");
 
-                    b.HasIndex("ShippingDetailsShippingId");
+                    b.HasIndex("ShippingId")
+                        .IsUnique();
+
+                    b.HasIndex("ShoppingCartId");
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Orders");
+                    b.ToTable("Order");
                 });
 
             modelBuilder.Entity("ClothingBrand.Domain.Models.OrderItem", b =>
@@ -289,7 +294,7 @@ namespace ClothingBrand.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PaymentId"));
 
-                    b.Property<int>("OrderId")
+                    b.Property<int?>("OrderId")
                         .HasColumnType("int");
 
                     b.Property<decimal>("PaymentAmount")
@@ -298,19 +303,17 @@ namespace ClothingBrand.Infrastructure.Migrations
                     b.Property<DateTime>("PaymentDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("PaymentMethod")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("PaymentStatus")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
                     b.HasKey("PaymentId");
 
                     b.HasIndex("OrderId");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Payments");
                 });
@@ -330,12 +333,9 @@ namespace ClothingBrand.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("DiscountId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ISBN")
+                    b.Property<int?>("DiscountId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("int");
 
                     b.Property<string>("ImageUrl")
                         .IsRequired()
@@ -409,24 +409,21 @@ namespace ClothingBrand.Infrastructure.Migrations
 
             modelBuilder.Entity("ClothingBrand.Domain.Models.Shipping", b =>
                 {
-                    b.Property<int>("ShippingId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ShippingId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("AddressLine1")
+                    b.Property<string>("Address")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("AddressLine2")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("City")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Country")
+                    b.Property<string>("PhoneNumber")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -434,20 +431,9 @@ namespace ClothingBrand.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal>("ShippingCost")
-                        .HasColumnType("decimal(18,2)");
+                    b.HasKey("Id");
 
-                    b.Property<string>("ShippingMethod")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("State")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("ShippingId");
-
-                    b.ToTable("Shippings");
+                    b.ToTable("Shipping");
                 });
 
             modelBuilder.Entity("ClothingBrand.Domain.Models.ShoppingCart", b =>
@@ -458,14 +444,7 @@ namespace ClothingBrand.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("UserId")
-                        .IsUnique();
 
                     b.ToTable("shoppingCarts");
                 });
@@ -477,6 +456,9 @@ namespace ClothingBrand.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
@@ -493,7 +475,7 @@ namespace ClothingBrand.Infrastructure.Migrations
 
                     b.HasIndex("ShoppingCartId");
 
-                    b.ToTable("ShoppingCartItems");
+                    b.ToTable("ShoppingCartItem");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -803,14 +785,7 @@ namespace ClothingBrand.Infrastructure.Migrations
 
             modelBuilder.Entity("ClothingBrand.Domain.Models.ApplicationUser", b =>
                 {
-                    b.Navigation("CustomClothingOrders");
-
-                    b.Navigation("Orders");
-
-                    b.Navigation("Payments");
-
-                    b.Navigation("ShoppingCart")
-                        .IsRequired();
+                    b.Navigation("Enrollments");
                 });
 
             modelBuilder.Entity("ClothingBrand.Domain.Models.Category", b =>
@@ -831,13 +806,16 @@ namespace ClothingBrand.Infrastructure.Migrations
             modelBuilder.Entity("ClothingBrand.Domain.Models.Product", b =>
                 {
                     b.Navigation("OrderItems");
-
-                    b.Navigation("ShoppingCartItems");
                 });
 
             modelBuilder.Entity("ClothingBrand.Domain.Models.SewingCourse", b =>
                 {
                     b.Navigation("Enrollments");
+                });
+
+            modelBuilder.Entity("ClothingBrand.Domain.Models.Shipping", b =>
+                {
+                    b.Navigation("Order");
                 });
 
             modelBuilder.Entity("ClothingBrand.Domain.Models.ShoppingCart", b =>
