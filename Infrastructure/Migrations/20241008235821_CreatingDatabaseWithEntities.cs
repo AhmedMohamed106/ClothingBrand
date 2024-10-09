@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ClothingBrand.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class CreateDB : Migration
+    public partial class CreatingDatabaseWithEntities : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -118,7 +118,7 @@ namespace ClothingBrand.Infrastructure.Migrations
                     ShippingId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     AddressLine1 = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    AddressLine2 = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    AddressLine2 = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     City = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     State = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PostalCode = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -346,11 +346,11 @@ namespace ClothingBrand.Infrastructure.Migrations
                     OrderId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     OrderDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    TotalPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     PaymentStatus = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     OrderStatus = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ShippingDetailsShippingId = table.Column<int>(type: "int", nullable: false),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                    ShippingDetailsShippingId = table.Column<int>(type: "int", nullable: true),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    TotalPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -365,8 +365,7 @@ namespace ClothingBrand.Infrastructure.Migrations
                         name: "FK_Orders_Shippings_ShippingDetailsShippingId",
                         column: x => x.ShippingDetailsShippingId,
                         principalTable: "Shippings",
-                        principalColumn: "ShippingId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "ShippingId");
                 });
 
             migrationBuilder.CreateTable(
@@ -377,8 +376,7 @@ namespace ClothingBrand.Infrastructure.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     ShoppingCartId = table.Column<int>(type: "int", nullable: false),
                     ProductId = table.Column<int>(type: "int", nullable: false),
-                    Quantity = table.Column<int>(type: "int", nullable: false),
-                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
+                    Quantity = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -422,7 +420,7 @@ namespace ClothingBrand.Infrastructure.Migrations
                         column: x => x.ProductId,
                         principalTable: "Products",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                 });
 
             migrationBuilder.CreateTable(
@@ -451,7 +449,7 @@ namespace ClothingBrand.Infrastructure.Migrations
                         column: x => x.OrderId,
                         principalTable: "Orders",
                         principalColumn: "OrderId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                 });
 
             migrationBuilder.CreateIndex(

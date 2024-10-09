@@ -233,7 +233,7 @@ namespace ClothingBrand.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("ShippingDetailsShippingId")
+                    b.Property<int?>("ShippingDetailsShippingId")
                         .HasColumnType("int");
 
                     b.Property<decimal>("TotalPrice")
@@ -420,7 +420,6 @@ namespace ClothingBrand.Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("AddressLine2")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("City")
@@ -478,9 +477,6 @@ namespace ClothingBrand.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<decimal>("Price")
-                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
@@ -659,9 +655,7 @@ namespace ClothingBrand.Infrastructure.Migrations
                 {
                     b.HasOne("ClothingBrand.Domain.Models.Shipping", "ShippingDetails")
                         .WithMany()
-                        .HasForeignKey("ShippingDetailsShippingId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ShippingDetailsShippingId");
 
                     b.HasOne("ClothingBrand.Domain.Models.ApplicationUser", "User")
                         .WithMany("Orders")

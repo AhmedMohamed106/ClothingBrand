@@ -6,6 +6,7 @@ using ClothingBrand.Domain.Models;
 using ClothingBrand.Infrastructure.DataContext;
 using ClothingBrand.Infrastructure.Emails;
 using ClothingBrand.Infrastructure.Repository;
+using infrastructure.Repos;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
