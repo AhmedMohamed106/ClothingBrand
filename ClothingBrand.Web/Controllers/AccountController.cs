@@ -95,7 +95,7 @@ namespace API.Controllers
         [HttpGet("ConfirmEmail")]
         public async Task<IActionResult> ConfirmEmail(string userId, string token)
         {
-           // await _account.ConfirmEmail(userId, token);
+            await _account.ConfirmEmail(userId, token);
             return Ok();
         }
 

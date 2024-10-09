@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -26,7 +27,9 @@ namespace ClothingBrand.Domain.Models
         public double ModelLength { get; set; }
 
         // Navigation Properties
-        public virtual ApplicationUser? User { get; set; } // Many-to-one with User
+        [ForeignKey("User")]
+        public string UserId { get; set; }
+        public virtual ApplicationUser User { get; set; } // Many-to-one with User
     }
 
 }

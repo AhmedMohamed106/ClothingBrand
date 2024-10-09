@@ -279,9 +279,50 @@ namespace infrastructure.Repos
         public async Task SendEmail(string userId)
         {
             var user= await userManager.FindByIdAsync(userId);
-         //   await SendConfirmationEmail(user);
+            await SendConfirmationEmail(user);
         }
 
+        private async Task SendConfirmationEmail(ApplicationUser userModel)
+        {
+
+            var token = await userManager.GenerateEmailConfirmationTokenAsync(userModel);
+            var encodedToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));//WebUtility.UrlEncode(token);
+            var requestAccessor = _contextAccessor.HttpContext.Request;
+            var reqest = requestAccessor.Scheme + "://" + requestAccessor.Host + "/api/Account/ConfirmEmail/?userId=" + userModel.Id + "&token=" + encodedToken;
+            var filePath = "wwwroot/Template/emailConfirm.html";
+            var str = new StreamReader(filePath);
+
+            var mailText = str.ReadToEnd();
+            str.Close();
+
+            mailText = mailText.Replace("Url_aboshaban", reqest);
+
+
+            var sendMessage = await _emailService.SendEmailAsync(userModel.Email, "Please Confirm Your Email", mailText);
+
+
+
+
+
+        }
+
+        public async Task<GeneralResponse> ConfirmEmail(string userID, string Token)
+        {
+            var user = await userManager.FindByIdAsync(userID);
+            var decodedToken = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(Token)); // WebUtility.UrlDecode(Token);
+            var result = await userManager.ConfirmEmailAsync(user, decodedToken);
+            if (result.Succeeded)
+            {
+                return new GeneralResponse(true, "Confirmed Email successful");
+            }
+            string err = "";
+            foreach (var item in result.Errors)
+            {
+                err += item.Description;
+            }
+            return new GeneralResponse { flag = false, message = err };
+
+        }
 
 
         public async Task<GeneralResponse> RemoveUser(string id)

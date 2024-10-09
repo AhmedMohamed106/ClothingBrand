@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
@@ -8,6 +8,8 @@
 
   <ItemGroup>
     <Folder Include="Behaviours\" />
+    <Folder Include="Common\DTO\Request\Shipping\" />
+    <Folder Include="Common\DTO\Request\ShoppingCart\" />
     <Folder Include="Validators\" />
   </ItemGroup>
 
