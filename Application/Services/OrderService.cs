@@ -18,8 +18,48 @@ namespace ClothingBrand.Application.Services
             _unitOfWork = unitOfWork;
         }
 
+        private decimal CalculateShippingCost(ShippingDto shippingDetails)
+        {
+            switch (shippingDetails.ShippingMethod.ToLower())
+            {
+                case "standard":
+                    return 5.00m;
+                case "express":
+                    return 10.00m;
+                case "international":
+                    return 20.00m;
+                default:
+                    throw new Exception("Unknown shipping method.");
+            }
+        }
         public OrderDto CreateOrder(string userId, ShoppingCartDto cart, ShippingDto shippingDetails)
         {
+            if (cart == null || cart.ShoppingCartItems == null || cart.ShoppingCartItems.Count == 0)
+            {
+                throw new Exception("Shopping cart is empty or not initialized.");
+            }
+
+            if (shippingDetails == null)
+            {
+                throw new Exception("Shipping details are required.");
+            }
+
+            // Validate shipping details
+            if (string.IsNullOrEmpty(shippingDetails.AddressLine1))
+            {
+                throw new Exception("Address Line 1 is required.");
+            }
+            // Add other validations as necessary...
+
+            // Validate each item in the cart
+            foreach (var item in cart.ShoppingCartItems)
+            {
+                if (item == null)
+                {
+                    throw new Exception("One or more items in the shopping cart are not initialized.");
+                }
+            }
+
             // Create order entity
             var newOrder = new Order
             {
@@ -28,13 +68,16 @@ namespace ClothingBrand.Application.Services
                 PaymentStatus = "Unpaid",
                 OrderStatus = "Pending",
                 UserId = userId,
-                ShippingDetails = new Shipping // Assuming Shipping is an entity that maps to ShippingDto
+                ShippingDetails = new Shipping
                 {
                     AddressLine1 = shippingDetails.AddressLine1,
                     AddressLine2 = shippingDetails.AddressLine2,
                     City = shippingDetails.City,
                     PostalCode = shippingDetails.PostalCode,
-                    Country = shippingDetails.Country
+                    Country = shippingDetails.Country,
+                    State = shippingDetails.State,
+                    ShippingMethod = shippingDetails.ShippingMethod,
+                    ShippingCost = CalculateShippingCost(shippingDetails) // Ensure Shipping entity has this property
                 },
                 OrderItems = cart.ShoppingCartItems.Select(item => new OrderItem
                 {
@@ -44,10 +87,23 @@ namespace ClothingBrand.Application.Services
                 }).ToList()
             };
 
+            // Validate newOrder
+            if (newOrder == null || newOrder.OrderItems == null || newOrder.OrderItems.Count == 0)
+            {
+                throw new Exception("Failed to create the order entity.");
+            }
+
+            // Ensure _unitOfWork and its repository are initialized
+            if (_unitOfWork == null || _unitOfWork.orderRepository == null)
+            {
+                throw new Exception("Database context is not initialized.");
+            }
+
             // Save order
             _unitOfWork.orderRepository.Add(newOrder);
             _unitOfWork.Save();
 
+            // Return order DTO (consider implementing a method to map Order to OrderDto)
             return new OrderDto
             {
                 OrderId = newOrder.OrderId,
@@ -74,6 +130,7 @@ namespace ClothingBrand.Application.Services
                 }).ToList()
             };
         }
+
 
         public OrderDto GetOrderById(int orderId)
         {

@@ -46,6 +46,7 @@ namespace ClothingBrand.Infrastructure.Repository
             shoppingCartItemRepository = new ShoppingCartItemRepository(_db);
             shoppingCartRepository = new ShoppingCartRepository(_db);
             shippingRepository = new ShippingRepository(_db);
+            orderRepository = new OrderRepository(_db);
 
 
 
