@@ -195,21 +195,18 @@ namespace ClothingBrand.Infrastructure.Migrations
 
             modelBuilder.Entity("ClothingBrand.Domain.Models.Enrollment", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<int>("SewingCourseId")
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<string>("ApplicationUserId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("EnrollDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("SewingCourseId")
-                        .HasColumnType("int");
+                    b.HasKey("SewingCourseId", "ApplicationUserId");
 
-                    b.HasKey("Id");
-
-                    b.HasIndex("SewingCourseId");
+                    b.HasIndex("ApplicationUserId");
 
                     b.ToTable("Enrollments");
                 });
@@ -642,11 +639,19 @@ namespace ClothingBrand.Infrastructure.Migrations
 
             modelBuilder.Entity("ClothingBrand.Domain.Models.Enrollment", b =>
                 {
+                    b.HasOne("ClothingBrand.Domain.Models.ApplicationUser", "ApplicationUser")
+                        .WithMany("Enrollments")
+                        .HasForeignKey("ApplicationUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("ClothingBrand.Domain.Models.SewingCourse", "SewingCourse")
                         .WithMany("Enrollments")
                         .HasForeignKey("SewingCourseId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("ApplicationUser");
 
                     b.Navigation("SewingCourse");
                 });
@@ -809,6 +814,8 @@ namespace ClothingBrand.Infrastructure.Migrations
             modelBuilder.Entity("ClothingBrand.Domain.Models.ApplicationUser", b =>
                 {
                     b.Navigation("CustomClothingOrders");
+
+                    b.Navigation("Enrollments");
 
                     b.Navigation("Orders");
 

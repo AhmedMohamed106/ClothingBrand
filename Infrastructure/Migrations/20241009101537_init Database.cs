@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ClothingBrand.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class CreatingDatabaseWithEntities : Migration
+    public partial class initDatabase : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -323,14 +323,19 @@ namespace ClothingBrand.Infrastructure.Migrations
                 name: "Enrollments",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ApplicationUserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     SewingCourseId = table.Column<int>(type: "int", nullable: false),
                     EnrollDate = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Enrollments", x => x.Id);
+                    table.PrimaryKey("PK_Enrollments", x => new { x.SewingCourseId, x.ApplicationUserId });
+                    table.ForeignKey(
+                        name: "FK_Enrollments_AspNetUsers_ApplicationUserId",
+                        column: x => x.ApplicationUserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Enrollments_SewingCourses_SewingCourseId",
                         column: x => x.SewingCourseId,
@@ -420,7 +425,7 @@ namespace ClothingBrand.Infrastructure.Migrations
                         column: x => x.ProductId,
                         principalTable: "Products",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.NoAction);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -497,9 +502,9 @@ namespace ClothingBrand.Infrastructure.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Enrollments_SewingCourseId",
+                name: "IX_Enrollments_ApplicationUserId",
                 table: "Enrollments",
-                column: "SewingCourseId");
+                column: "ApplicationUserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_OrderItems_OrderId",
