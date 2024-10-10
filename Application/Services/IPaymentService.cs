@@ -9,9 +9,7 @@ namespace ClothingBrand.Application.Services
 {
     public interface IPaymentService
     {
-        PaymentDto ProcessPayment(PaymentDto paymentDto);
-        PaymentDto GetPaymentById(int paymentId);
-        IEnumerable<PaymentDto> GetPaymentsByUserId(string userId);
+        public PaymentResultDto ProcessPayment(PaymentDto paymentDto);
     }
 
 }

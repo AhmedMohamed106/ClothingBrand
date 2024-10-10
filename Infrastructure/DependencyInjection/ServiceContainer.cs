@@ -1,6 +1,7 @@
 ﻿using Application.interfaces;
 using ClothingBrand.Application.Common.Interfaces;
 using ClothingBrand.Application.Services;
+using ClothingBrand.Application.Settings;
 using ClothingBrand.Domain.Models;
 using ClothingBrand.Infrastructure.DataContext;
 using ClothingBrand.Infrastructure.Emails;
@@ -19,11 +20,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace infrastructure.DependencyInjection
+namespace ClothingBrand.Infrastructure.DependencyInjection
 {
     public static class ServiceContainer
     {
-        public static IServiceCollection AddInfrastructureService(this IServiceCollection services,IConfiguration config)
+        public static IServiceCollection AddInfrastructureService(this IServiceCollection services, IConfiguration config)
         {
             services.AddDbContext<ApplicationDbContext>(options =>
             {
@@ -32,6 +33,7 @@ namespace infrastructure.DependencyInjection
                 );
             });
 
+            services.Configure<StripeSettings>(config.GetSection("Stripe"));
 
           //  services.AddIdentityCore<ApplicationUser>(opt=>opt.SignIn.RequireConfirmedEmail=true).AddRoles<IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>().AddSignInManager();
           services.AddIdentity<ApplicationUser,IdentityRole>(options =>
@@ -68,12 +70,18 @@ namespace infrastructure.DependencyInjection
             services.AddAuthorization();
             services.AddCors(options =>
             {
-                options.AddPolicy("Clean", bul => bul.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()) ;
+                options.AddPolicy("Clean", bul => bul.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
             });
+
+
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IProductService, ProductService>();
-            services.AddScoped<IAccount,AccountRepository>();
-           services.AddScoped<IProductRepository,ProductRepository>();
+            services.AddScoped<IOrderService, OrderService>();
+            services.AddScoped<IShoppingCartService, ShoppingCartService>();
+            services.AddScoped<IPaymentService, PaymentService>();
+
+            services.AddScoped<IAccount, AccountRepository>();
+            services.AddScoped<IProductRepository, ProductRepository>();
             services.AddScoped<ICategoryRepository, CategoryRepository>();
             services.AddScoped<IDiscountRepository, DiscountRepository>();
             services.Configure<MailSettings>(config.GetSection("MailSettings"));

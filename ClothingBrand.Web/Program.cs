@@ -1,7 +1,9 @@
 using ClothingBrand.Application.Contract;
 using ClothingBrand.Application.Services;
+using ClothingBrand.Application.Settings;
+using ClothingBrand.Infrastructure.DependencyInjection;
 using ClothingBrand.Infrastructure.Emails;
-using infrastructure.DependencyInjection;
+using ClothingBrand.Infrastructure.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
@@ -20,6 +22,7 @@ namespace ClothingBrand.Web
            
 
             builder.Services.AddControllers();
+
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();

@@ -8,13 +8,13 @@ namespace ClothingBrand.Application.Common.DTO.Response.Payment
 {
     public class PaymentDto
     {
-        public int PaymentId { get; set; }
-        public DateTime PaymentDate { get; set; }
-        public decimal PaymentAmount { get; set; }
-        public string PaymentMethod { get; set; }
-        public string PaymentStatus { get; set; }
-        public int OrderId { get; set; }
-        public string UserId { get; set; }
+        public string CardNumber { get; set; }
+        public string ExpirationMonth { get; set; }
+        public string ExpirationYear { get; set; }
+        public string Cvc { get; set; }
+        public decimal Amount { get; set; }
+        public string Currency { get; set; } = "usd";
     }
+
 
 }

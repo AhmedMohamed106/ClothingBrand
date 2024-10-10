@@ -16,7 +16,6 @@ namespace ClothingBrand.Domain.Models
         public string ImageUrl { get; set; }
         public int StockQuantity { get; set; }
         public string ISBN { get; set; }
-
         // Category relation
         [ForeignKey("Category")]
         public int CategoryId { get; set; }

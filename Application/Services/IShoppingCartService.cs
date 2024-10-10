@@ -1,4 +1,7 @@
-﻿using ClothingBrand.Application.Common.DTO.Response.ShoppingCart;
+﻿using ClothingBrand.Application.Common.DTO.OrderDto;
+using ClothingBrand.Application.Common.DTO.Response.Payment;
+using ClothingBrand.Application.Common.DTO.Response.Shipping;
+using ClothingBrand.Application.Common.DTO.Response.ShoppingCart;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,10 +12,12 @@ namespace ClothingBrand.Application.Services
 {
     public interface IShoppingCartService
     {
-        ShoppingCartDto GetShoppingCartByUserId(string userId);
-        ShoppingCartDto AddItemToCart(int cartId, ShoppingCartItemDto itemDto);
-        void RemoveItemFromCart(int cartId, int itemId);
-        void ClearCart(int cartId);
+        ShoppingCartDto GetShoppingCart(string userId);
+        void AddToCart(string userId, ShoppingCartItemDto item);
+        OrderDto Checkout(string userId, ShippingDto shippingDetails, PaymentDto paymentDto);
+        void ClearCart(string userId);
+        void RemoveFromCart(string userId, int productId);
     }
+
 
 }

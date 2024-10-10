@@ -21,6 +21,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="MimeKit" Version="4.8.0" />
+    <PackageReference Include="Stripe.net" Version="46.1.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -30,6 +31,7 @@
 
   <ItemGroup>
     <Folder Include="Configuration\" />
+    <Folder Include="Migrations\" />
   </ItemGroup>
 
 </Project>
