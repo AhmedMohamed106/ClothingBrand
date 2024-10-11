@@ -166,7 +166,11 @@ namespace ClothingBrand.Application.Services
                 case "International":
                     shippingCost = 20.00m; // Example: rate for international shipping
                     break;
+                case "NA":
+                    shippingCost = 0m;
+                    break;
                 default:
+                    
                     throw new Exception("Unknown shipping method.");
             }
 

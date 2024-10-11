@@ -17,6 +17,35 @@ namespace ClothingBrand.Infrastructure.DataContext
 
 
         }
+        /*
+         modelBuilder.Entity<StudentCourse>()
+            .HasKey(sc => new { sc.StudentId, sc.CourseId });
+
+        modelBuilder.Entity<StudentCourse>()
+            .HasOne(sc => sc.Student)
+            .WithMany(s => s.StudentCourses)
+            .HasForeignKey(sc => sc.StudentId);
+
+        modelBuilder.Entity<StudentCourse>()
+            .HasOne(sc => sc.Course)
+            .WithMany(c => c.StudentCourses)
+            .HasForeignKey(sc => sc.CourseId);
+         */
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            builder.Entity<Enrollment>().HasKey(e=> new {e.SewingCourseId ,e.ApplicationUserId});
+            builder.Entity<Enrollment>().HasOne(e => e.ApplicationUser)
+                .WithMany(s => s.Enrollments)
+                .HasForeignKey(u => u.ApplicationUserId);
+
+            builder.Entity<Enrollment>().HasOne(e => e.SewingCourse)
+                .WithMany(s => s.Enrollments)
+                .HasForeignKey(u => u.SewingCourseId);
+
+            base.OnModelCreating(builder);
+
+
+        }
         public DbSet<RefreshTocken> RefreshTokens { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<CustomClothingOrder> customClothingOrders { get; set; }

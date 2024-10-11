@@ -16,5 +16,6 @@ namespace ClothingBrand.Domain.Models
         public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
         public virtual ICollection<CustomClothingOrder> CustomClothingOrders { get; set; } = new List<CustomClothingOrder>();
 
+        public virtual ICollection<Enrollment>? Enrollments { get; set; } // One-to-many with Enrollment
     }
 }

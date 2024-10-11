@@ -85,6 +85,7 @@ namespace ClothingBrand.Application.Services
                     ExpMonth = paymentDto.ExpirationMonth,
                     ExpYear = paymentDto.ExpirationYear,
                     Cvc = paymentDto.Cvc,
+                    
                 }
             };
 
