@@ -81,6 +81,7 @@ namespace ClothingBrand.Application.Services
                 },
                 OrderItems = cart.ShoppingCartItems.Select(item => new OrderItem
                 {
+                    
                     ProductId = item.ProductId,
                     Quantity = item.Quantity,
                     Price = item.Price * item.Quantity

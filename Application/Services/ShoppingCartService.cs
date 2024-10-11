@@ -35,10 +35,12 @@ namespace ClothingBrand.Application.Services
 
             return new ShoppingCartDto
             {
+                Id = cart.Id,
                 TotalPrice = cart.TotalPrice,
                 UserId = cart.UserId,
                 ShoppingCartItems = cart.ShoppingCartItems.Select(item => new ShoppingCartItemDto
                 {
+                    Id = item.Id,
                     ProductId = item.ProductId,
                     Quantity = item.Quantity,
                     ProductName = item.Product != null ? item.Product.Name : "Unknown", // Safe null check
@@ -95,6 +97,7 @@ namespace ClothingBrand.Application.Services
                 // Add the new item to the cart using navigation property
                 var cartItem = new ShoppingCartItem
                 {
+                    Id = item.Id,
                     ProductId = item.ProductId,
                     ShoppingCartId = item.ShoppingCartId,
                     Quantity = item.Quantity,
@@ -112,7 +115,7 @@ namespace ClothingBrand.Application.Services
         public void RemoveFromCart(string userId, int productId)
         {
             // Retrieve the shopping cart
-            var cart = _unitOfWork.shoppingCartRepository.Get(c => c.UserId == userId, tracked: true);
+            var cart = _unitOfWork.shoppingCartRepository.Get(c => c.UserId == userId, includeProperties: "ShoppingCartItems", tracked: true);
             if (cart == null)
             {
                 throw new Exception("Shopping cart not found.");
@@ -128,6 +131,7 @@ namespace ClothingBrand.Application.Services
             }
             else
             {
+                var itemIdsInCart = cart.ShoppingCartItems.Select(i => i.ProductId).ToList();
                 throw new Exception("Item not found in the shopping cart.");
             }
         }
