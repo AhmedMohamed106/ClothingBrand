@@ -45,6 +45,7 @@ namespace ClothingBrand.Application.Services
                     Quantity = item.Quantity,
                     ProductName = item.Product != null ? item.Product.Name : "Unknown", // Safe null check
                     Price = item.Price,
+                    imageUrl = item.Product?.ImageUrl,
                     ShoppingCartId = item.ShoppingCartId
                     
                 }).ToList()

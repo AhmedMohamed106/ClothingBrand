@@ -61,6 +61,7 @@ namespace ClothingBrand.Api.Controllers
                         Quantity = item.Quantity,
                         Price = item.Price,
                         ProductName = item.ProductName
+                        ,ImageUrl = item.ImageUrl
                     });
                 }
 
@@ -101,7 +102,9 @@ namespace ClothingBrand.Api.Controllers
                 {
                     Quantity = item.Quantity,
                     Price = item.Price,
-                    ProductName = item.ProductName
+                    ProductName = item.ProductName,
+                    ImageUrl = item.ImageUrl
+                    
                 });
             }
 
@@ -157,7 +160,8 @@ namespace ClothingBrand.Api.Controllers
                     {
                         Quantity = item.Quantity,
                         Price = item.Price,
-                        ProductName = item.ProductName
+                        ProductName = item.ProductName,
+                        ImageUrl = item.ImageUrl
                     });
                 }
 

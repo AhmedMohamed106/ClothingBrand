@@ -60,6 +60,7 @@ namespace ClothingBrand.WebApi.Controllers
                 ProductId = request.ProductId,
                 Quantity = request.Quantity
                 ,ShoppingCartId = request.ShoppingCartId
+           
               
             };
 

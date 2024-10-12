@@ -28,6 +28,8 @@ namespace ClothingBrand.Application.Services
                     return 10.00m;
                 case "international":
                     return 20.00m;
+                case "NA":
+                    return 0.0m;
                 default:
                     throw new Exception("Unknown shipping method.");
             }
@@ -44,11 +46,7 @@ namespace ClothingBrand.Application.Services
                 throw new Exception("Shipping details are required.");
             }
 
-            // Validate shipping details
-            if (string.IsNullOrEmpty(shippingDetails.AddressLine1))
-            {
-                throw new Exception("Address Line 1 is required.");
-            }
+           
             // Add other validations as necessary...
 
             // Validate each item in the cart
@@ -129,6 +127,7 @@ namespace ClothingBrand.Application.Services
                     ProductId = oi.ProductId,
                     Quantity = oi.Quantity,
                     ProductName = oi.Product.Name,
+                    ImageUrl = oi.Product?.ImageUrl,
                     Price = oi.Price
                 }).ToList()
             };
@@ -166,6 +165,7 @@ namespace ClothingBrand.Application.Services
                     orderId = oi.OrderId,
                     ProductId = oi.ProductId,
                     Quantity = oi.Quantity,
+                    ImageUrl = oi.Product?.ImageUrl,
                     Price = oi.Price
                 }).ToList()
             };
@@ -223,6 +223,8 @@ namespace ClothingBrand.Application.Services
                     orderId = oi.OrderId,
                     ProductId = oi.ProductId,
                     Quantity = oi.Quantity,
+                    ProductName = oi.Product.Name,
+                    ImageUrl= oi.Product.ImageUrl,
                     Price = oi.Price
                 }).ToList()
             }).ToList();
@@ -268,6 +270,8 @@ namespace ClothingBrand.Application.Services
                     orderId = oi.OrderId,
                     ProductId = oi.ProductId,
                     Quantity = oi.Quantity,
+                    ProductName = oi.Product?.Name,
+                    ImageUrl = oi.Product?.ImageUrl,
                     Price = oi.Price
                 }).ToList()
             }).ToList();
