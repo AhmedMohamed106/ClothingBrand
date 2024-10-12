@@ -84,6 +84,7 @@ namespace ClothingBrand.Application.Services
                     
                     ProductId = item.ProductId,
                     Quantity = item.Quantity,
+                    
                     Price = item.Price * item.Quantity
                 }).ToList()
             };
@@ -127,6 +128,7 @@ namespace ClothingBrand.Application.Services
                     orderId = oi.OrderId,
                     ProductId = oi.ProductId,
                     Quantity = oi.Quantity,
+                    ProductName = oi.Product.Name,
                     Price = oi.Price
                 }).ToList()
             };

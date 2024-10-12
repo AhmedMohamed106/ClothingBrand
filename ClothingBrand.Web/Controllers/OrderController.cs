@@ -20,18 +20,18 @@ namespace ClothingBrand.Api.Controllers
         }
 
         //// POST: api/order/create
-        //[HttpPost("create")]
-        //[Authorize]
-        //public ActionResult<OrderDto> CreateOrder([FromBody] CreateOrderRequest request)
-        //{
-        //    // Customize the request as needed based on your requirements
-        //    var order = _orderService.CreateOrder(request.UserId, request.ShoppingCart, request.ShippingDetails);
-        //    return CreatedAtAction(nameof(GetOrderById), new { orderId = order.OrderId }, order);
-        //}
+        [HttpPost("create")]
+        [Authorize]
+        public ActionResult<OrderDto> CreateOrder([FromBody] CreateOrderRequest request)
+        {
+            // Customize the request as needed based on your requirements
+            var order = _orderService.CreateOrder(request.UserId, request.ShoppingCart, request.ShippingDetails);
+            return CreatedAtAction(nameof(GetOrderById), new { orderId = order.OrderId }, order);
+        }
 
         // GET: api/order
         [HttpGet]
-        [Authorize]
+       // [Authorize]
         public ActionResult<IEnumerable<OrderSummaryDto>> GetOrders()
         {
             var orders = _orderService.GetOrders();
@@ -71,7 +71,7 @@ namespace ClothingBrand.Api.Controllers
         }
 
         [HttpGet("{orderId}")]
-        [Authorize]
+       // [Authorize]
         public ActionResult<OrderSummaryDto> GetOrderById(int orderId)
         {
             var order = _orderService.GetOrderById(orderId);
@@ -111,7 +111,7 @@ namespace ClothingBrand.Api.Controllers
 
         // PUT: api/order/{id}/status
         [HttpPut("{orderId}/status")]
-        [Authorize]
+       // [Authorize]
         public ActionResult UpdateOrderStatus(int orderId, [FromBody] UpdateOrderStatusDto dto)
         {
             _orderService.UpdateOrderStatus(orderId, dto);
@@ -120,7 +120,7 @@ namespace ClothingBrand.Api.Controllers
 
         // PUT: api/order/{id}/payment-status
         [HttpPut("{orderId}/payment-status")]
-        [Authorize]
+      //  [Authorize]
         public ActionResult UpdatePaymentStatus(int orderId, [FromBody] string paymentStatus)
         {
             _orderService.UpdatePaymentStatus(orderId, paymentStatus);
@@ -128,7 +128,7 @@ namespace ClothingBrand.Api.Controllers
         }
 
         [HttpGet("user/{userId}")]
-        [Authorize]
+       // [Authorize]
         public ActionResult<IEnumerable<OrderSummaryDto>> GetUserOrders(string userId)
         {
             var orders = _orderService.GetUserOrders(userId);

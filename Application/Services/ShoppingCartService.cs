@@ -197,7 +197,7 @@ namespace ClothingBrand.Application.Services
             decimal shippingCost = CalculateShippingCost(shippingDetails); // Assuming you have this method
             decimal totalPrice = cart.TotalPrice + shippingCost;
 
-            paymentDto.Amount = totalPrice;
+            paymentDto.Amount = (long)( totalPrice * 100);  // converts dollars to cents
 
             // Create the order
             var order = _orderService.CreateOrder(userId, cart, shippingDetails);
@@ -207,7 +207,7 @@ namespace ClothingBrand.Application.Services
             }
 
             // Process payment
-            var paymentResult = _paymentService.ProcessPayment(paymentDto);
+            var paymentResult = _paymentService.ProcessPayment(paymentDto).Result;
             if (!paymentResult.IsSuccessful)
             {
                 throw new Exception(paymentResult.Message);
