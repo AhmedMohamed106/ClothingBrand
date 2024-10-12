@@ -23,7 +23,7 @@ namespace ClothingBrand.Web.Controllers
                 return BadRequest(ModelState);
 
             var result = _paymentService.ProcessPayment(paymentDto);
-            if (result.IsSuccessful)
+            if (result.IsCompletedSuccessfully)
                 return Ok(result);
 
             return BadRequest(result);
