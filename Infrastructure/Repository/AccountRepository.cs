@@ -204,7 +204,8 @@ namespace infrastructure.Repos
                     Email = user.Email,
                     Name = user.Name,
                     RoleID = RoleInfo.Id,
-                    RoleName = userRole
+                    RoleName = userRole,
+                    UserID = user.Id
                 });
             }
             return ListOfRoles;
@@ -231,7 +232,7 @@ namespace infrastructure.Repos
                 if (token is null || refreshToken is null) return new LoginResponse(false, "invalid Login");
                 var saveResult = await SaveRefreshToken(user.Id, refreshToken);
                 if (saveResult.flag)
-                    return new LoginResponse { flag = true, message = "Success", Token = token, RefreshToken = refreshToken };
+                    return new LoginResponse { flag = true, message = "Success", Token = token, RefreshToken = refreshToken,userId=user.Id };
                 return new LoginResponse { flag = false, message = saveResult.message };
             }
             catch (Exception ex)
@@ -250,7 +251,7 @@ namespace infrastructure.Repos
             var refreshToken = GenerateRefreshToken();
             var res = await SaveRefreshToken(user.Id, refreshToken);
             if (!res.flag) return new LoginResponse();
-            return new LoginResponse(true, res.message, newToken, refreshToken);
+            return new LoginResponse(true, res.message, newToken, refreshToken,user.Id);
 
 
 

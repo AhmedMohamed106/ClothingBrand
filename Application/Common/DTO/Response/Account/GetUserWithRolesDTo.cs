@@ -11,5 +11,6 @@ namespace Application.DTOs.Response.Account
         public string RoleName { get; set; }
 
         public string RoleID { get; set; }
+        public string UserID { get; set; }
     }
 }
