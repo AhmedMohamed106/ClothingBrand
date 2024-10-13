@@ -60,6 +60,7 @@ namespace ClothingBrand.WebApi.Controllers
                 ProductId = request.ProductId,
                 Quantity = request.Quantity
                 ,ShoppingCartId = request.ShoppingCartId
+           
               
             };
 
@@ -95,8 +96,27 @@ namespace ClothingBrand.WebApi.Controllers
         // POST: api/shoppingcart/checkout
        // [Authorize]
         [HttpPost("checkout")]
-        public IActionResult Checkout(string userId , [FromBody] CheckoutRequestDto checkoutRequest)
+        public IActionResult Checkout([FromBody] CheckoutRequestDto checkoutRequest)
         {
+            if (checkoutRequest == null)
+            {
+                return BadRequest("Invalid request.");
+            }
+
+            if (string.IsNullOrWhiteSpace(checkoutRequest.userId))
+            {
+                return BadRequest("User ID is required.");
+            }
+
+            if (checkoutRequest.ShippingDetails == null)
+            {
+                return BadRequest("Shipping details are required.");
+            }
+
+            if (checkoutRequest.PaymentDto == null)
+            {
+                return BadRequest("Payment details are required.");
+            }
             //var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             //if (string.IsNullOrEmpty(userId))
             //{
@@ -116,23 +136,22 @@ namespace ClothingBrand.WebApi.Controllers
 
             PaymentDto paymentDetailsDto = new PaymentDto
             {
-                CardNumber = checkoutRequest.PaymentDetails.CardNumber,
-                ExpirationMonth = checkoutRequest.PaymentDetails.ExpirationMonth,
-                ExpirationYear = checkoutRequest.PaymentDetails.ExpirationYear,
-                Cvc = checkoutRequest.PaymentDetails.Cvc
+                Amount = checkoutRequest.PaymentDto.Amount,
+               Currency = checkoutRequest.PaymentDto.Currency,
+               PaymentMethodId = checkoutRequest.PaymentDto.PaymentMethodId
             };
 
             try
             {
-                var order = _shoppingCartService.Checkout(userId, checkoutShippingRequestDto, paymentDetailsDto);
+                var order = _shoppingCartService.Checkout(checkoutRequest.userId, checkoutShippingRequestDto, paymentDetailsDto);
                 return Ok(order);
             }
             catch (Exception ex)
             {
                 // Log the detailed error
-                _logger.LogError(ex, "Error during checkout for user {UserId}", userId);
+                _logger.LogError(ex, "Error during checkout for user {UserId}", checkoutRequest.userId);
                 // Return a generic error message
-                return BadRequest("An error occurred during checkout.");
+                return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
 

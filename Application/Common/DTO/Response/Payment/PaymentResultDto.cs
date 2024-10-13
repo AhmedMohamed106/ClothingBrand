@@ -9,7 +9,9 @@ namespace ClothingBrand.Application.Common.DTO.Response.Payment
     public class PaymentResultDto
     {
         public bool IsSuccessful { get; set; }
-        public string TransactionId { get; set; }
         public string Message { get; set; }
+        public bool RequiresAction { get; set; } // Used for 3D Secure authentication
+        public string PaymentIntentClientSecret { get; set; } // ClientSecret for further confirmation
+
     }
 }

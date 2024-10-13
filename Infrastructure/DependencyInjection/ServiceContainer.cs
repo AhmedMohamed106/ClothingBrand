@@ -1,5 +1,6 @@
 ﻿using Application.interfaces;
 using ClothingBrand.Application.Common.Interfaces;
+using ClothingBrand.Application.Contract;
 using ClothingBrand.Application.Services;
 using ClothingBrand.Application.Settings;
 using ClothingBrand.Domain.Models;
@@ -79,11 +80,15 @@ namespace ClothingBrand.Infrastructure.DependencyInjection
             services.AddScoped<IOrderService, OrderService>();
             services.AddScoped<IShoppingCartService, ShoppingCartService>();
             services.AddScoped<IPaymentService, PaymentService>();
-
+            services.AddScoped<ICustomClothingOrderService, CustomClothingOrderService>();
             services.AddScoped<IAccount, AccountRepository>();
             services.AddScoped<IProductRepository, ProductRepository>();
             services.AddScoped<ICategoryRepository, CategoryRepository>();
             services.AddScoped<IDiscountRepository, DiscountRepository>();
+            services.AddScoped<IcategoryService, CategoryService>();
+            services.AddScoped<IProductService, ProductService>();
+            services.AddScoped<IDiscountService, DiscountService>();
+            services.AddTransient<IEmailService, EmailService>();
             services.Configure<MailSettings>(config.GetSection("MailSettings"));
 
             return services;

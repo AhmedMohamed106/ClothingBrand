@@ -3,7 +3,6 @@ using ClothingBrand.Application.Services;
 using ClothingBrand.Application.Settings;
 using ClothingBrand.Infrastructure.DependencyInjection;
 using ClothingBrand.Infrastructure.Emails;
-using ClothingBrand.Infrastructure.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.OpenApi.Models;
@@ -15,12 +14,6 @@ namespace ClothingBrand.Web
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-
-            // Add services to the container.
-
-            //register SQL server 
-
-           
 
             builder.Services.AddControllers();
 
@@ -54,12 +47,7 @@ namespace ClothingBrand.Web
 
 
             builder.Services.AddInfrastructureService(builder.Configuration);
-            builder.Services.AddScoped<IcategoryService, CategoryService>();
-            builder.Services.AddScoped<IProductService, ProductService>();
-            builder.Services.AddScoped<IDiscountService, DiscountService>();
-           
 
-            builder.Services.AddTransient<IEmailService, EmailService>();
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.

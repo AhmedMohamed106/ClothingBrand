@@ -22,5 +22,6 @@ namespace ClothingBrand.Application.Common.DTO.OrderDto
         {
             OrderItems = new List<OrderItemDto>();
         }
+
     }
 }
