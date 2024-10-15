@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -43,6 +44,9 @@ namespace ClothingBrand.Application.Common.DTO.Request.CustomOrderClothes
 
         [Required]
         public double ModelLength { get; set; }
+
+        public IFormFile Image { get; set; }
+
 
         // UserId can be included if needed in order creation
         public string UserId { get; set; }
