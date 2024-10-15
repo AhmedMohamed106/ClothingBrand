@@ -9,6 +9,7 @@ namespace ClothingBrand.Application.Common.Interfaces
 {
     public interface IEnrollmentRepository: IRepository<Enrollment>
     {
-
+        IEnumerable<ApplicationUser> GetUserEnrollInCourse(int CourseId);
+        IEnumerable<SewingCourse> GetCoursesForUser(string UserId);
     }
 }

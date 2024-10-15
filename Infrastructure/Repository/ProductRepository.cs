@@ -1,9 +1,12 @@
 ﻿using ClothingBrand.Application.Common.Interfaces;
 using ClothingBrand.Domain.Models;
 using ClothingBrand.Infrastructure.DataContext;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Drawing.Printing;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -37,6 +40,36 @@ namespace ClothingBrand.Infrastructure.Repository
            
 
         }
+
+
+        public IQueryable<Product> GetAllWithPagaAsync(int page, int pageSize, Expression<Func<Product, bool>>? filter = null, string? includeProperties = null, bool tracked = false)
+        {
+            IQueryable<Product> query;
+            if (tracked)
+            {
+                query = dbSet;
+            }
+            else
+            {
+                query = dbSet.AsNoTracking();
+            }
+            if (filter != null)
+            {
+                query = query.Where(filter);
+            }
+            if (!string.IsNullOrEmpty(includeProperties))
+            {
+                foreach (var includeProp in includeProperties
+                    .Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+                {
+                    query = query.Include(includeProp.Trim());
+                }
+            }
+            var skip = (page - 1) * pageSize;
+            return  query.Skip(skip).Take(pageSize).AsQueryable();
+            
+        }
+
 
     }
 }

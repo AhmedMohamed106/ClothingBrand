@@ -10,7 +10,7 @@ using ClothingBrand.Domain.Models;
 using ClothingBrand.Infrastructure.DataContext;
 using Mapster;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity;
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -25,6 +25,8 @@ using Microsoft.AspNetCore.Http;
 using ClothingBrand.Application.Contract;
 using System.Net;
 using Microsoft.AspNetCore.WebUtilities;
+using ClothingBrand.Application.Common.DTO.Request.Account;
+using Microsoft.AspNetCore.Mvc;
 
 namespace infrastructure.Repos
 {
@@ -216,7 +218,7 @@ namespace infrastructure.Repos
             {
                 var user = await FindUserByEmailAsync(model.Email);
                 if (user == null) return new LoginResponse(false, "invalid Login");
-                SignInResult signInResult;
+                Microsoft.AspNetCore.Identity.SignInResult signInResult;
                 try
                 {
                     signInResult = await signInManager.CheckPasswordSignInAsync(user, model.Password, false);
@@ -359,6 +361,81 @@ namespace infrastructure.Repos
             await signInManager.SignOutAsync();
              return new GeneralResponse(true, "User deleted successfully");
         }
+
+
+
+
+        public async Task<GeneralResponse> ResetPassword(string userId,string token,string password)
+        {
+            ApplicationUser userModel = await userManager.FindByIdAsync(userId);
+            if (userModel != null)
+            {
+                var decodedToken = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(token));
+                var result = await userManager.ResetPasswordAsync(userModel, decodedToken, password);
+                if (result.Succeeded)
+                {
+                    return new GeneralResponse(true,"password changes");
+                }
+                return new GeneralResponse(false, "Invalid password");
+            }
+
+
+            return new GeneralResponse(false, "Invalid user ID");
+
+        }
+
+
+
+
+        public async Task ForgetPassword(string userEmail)
+        {
+            var userModel= await FindUserByEmailAsync(userEmail);
+
+            if (userModel != null)
+            {
+
+                var token = await userManager.GeneratePasswordResetTokenAsync(userModel);
+                var encodedToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));//WebUtility.UrlEncode(token);
+                var requestAccessor = _contextAccessor.HttpContext.Request;
+                var reqest = requestAccessor.Scheme + "://" + requestAccessor.Host + "/api/Account/ResetPassword/?userId=" + userModel.Id + "&token=" + encodedToken+ "&password=Shaban@123";
+                var filePath = "wwwroot/Template/emailConfirm.html";
+                var str = new StreamReader(filePath);
+
+                var mailText = str.ReadToEnd();
+                str.Close();
+
+                mailText = mailText.Replace("Url_aboshaban", reqest);
+
+
+                var sendMessage = await _emailService.SendEmailAsync(userModel.Email, "Please Change Your Password", mailText);
+            }
+
+
+
+        }
+
+        public async Task<GeneralResponse> ChangePassword(ChangePasswordDTO changePasswordDTO)
+        {
+            
+                ApplicationUser userModel = await userManager.FindByNameAsync(changePasswordDTO.Email);
+
+                if (userModel != null && await userManager.CheckPasswordAsync(userModel, changePasswordDTO.Password))
+                {
+                    await userManager.ChangePasswordAsync(userModel, changePasswordDTO.Password, changePasswordDTO.NewPassword);
+
+
+                         return new GeneralResponse(true, "Password Change successfully");
+
+                }
+
+            return new GeneralResponse(true, "invaild Password Or User");
+
+        }
+
+           
+        
+
+
 
     }
 }

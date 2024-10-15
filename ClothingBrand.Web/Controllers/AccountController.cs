@@ -1,7 +1,11 @@
 ﻿using Application.DTOs.Request.Account;
 using Application.interfaces;
+using ClothingBrand.Application.Common.DTO.Request.Account;
+using ClothingBrand.Domain.Models;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 
 namespace API.Controllers
@@ -30,7 +34,7 @@ namespace API.Controllers
             var response = await _account.LoginAccountAsync(signAcc);
             if (!response.flag) return BadRequest(response.message);
 
-            return Ok(response.message);
+            return Ok(response);
 
         }
         [HttpPost("identity/refresh-token")]
@@ -123,5 +127,52 @@ namespace API.Controllers
             await _account.SendEmail(id);
             return Ok();
         }
+
+
+
+        [HttpGet("ResetPassword")]
+        public async Task<IActionResult> ResetPassword(string userId, string token, string password)
+        {
+            {
+                var result = await _account.ResetPassword(userId, token, password);
+                if (result.flag)
+                {
+                    return Ok(result.message);
+                }
+                return BadRequest(result.message);
+            }
+
+
+
+
+        }
+
+
+
+        [HttpPost("ForgetPassword")]
+        public async Task<IActionResult> ForgetPassword([Required] string email)
+        {
+            await _account.ForgetPassword(email);
+            return Ok();
+        }
+        [HttpPost("ChangePassword")]
+        public async Task<IActionResult> ChangePassword(ChangePasswordDTO changePasswordDTO)
+        {
+
+            if (ModelState.IsValid)
+            {
+                var res = await _account.ChangePassword(changePasswordDTO);
+
+                return Ok(res.message);
+            }
+            return BadRequest(ModelState);
+
+
+
+        }
+
+
     }
+
+
 }

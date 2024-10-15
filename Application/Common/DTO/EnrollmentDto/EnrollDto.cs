@@ -8,7 +8,7 @@ namespace ClothingBrand.Application.Common.DTO.EnrollmentDto
 {
     public class EnrollDto
     {
-        public int? UserId {  get; set; }
+        public string? UserId {  get; set; }
         public int? CourseId { get; set; }
         public string? EnrollDate { get; set; }
         public ICollection<string>? Users { get; set; } = new List<string>();

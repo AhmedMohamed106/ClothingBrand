@@ -9,6 +9,7 @@
   <ItemGroup>
     <PackageReference Include="MailKit" Version="4.8.0" />
     <PackageReference Include="Mapster" Version="7.4.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="7.0.20" />
         <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.20" />
     <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />            
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.20" />
@@ -31,7 +32,6 @@
 
   <ItemGroup>
     <Folder Include="Configuration\" />
-    <Folder Include="Migrations\" />
   </ItemGroup>
 
 </Project>

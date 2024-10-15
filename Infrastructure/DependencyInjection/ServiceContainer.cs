@@ -65,6 +65,9 @@ namespace ClothingBrand.Infrastructure.DependencyInjection
                     ValidAudience = config["Jwt:ValidAudiance"],
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Secret"]!))
                 };
+
+
+
             });
             services.AddAuthentication();
             services.AddAuthorization();
@@ -84,7 +87,15 @@ namespace ClothingBrand.Infrastructure.DependencyInjection
             services.AddScoped<IProductRepository, ProductRepository>();
             services.AddScoped<ICategoryRepository, CategoryRepository>();
             services.AddScoped<IDiscountRepository, DiscountRepository>();
+            services.AddScoped<ICourseService, CourseService>();
             services.Configure<MailSettings>(config.GetSection("MailSettings"));
+            services.AddAuthentication().AddGoogle(option
+                =>
+            {
+                IConfigurationSection googleAuthSection = config.GetSection("Auth:Google");
+                option.ClientId = googleAuthSection["ClientId"];
+                option.ClientSecret = googleAuthSection["ClientSecret"];
+            });
 
             return services;
         }

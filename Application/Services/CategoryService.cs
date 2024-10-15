@@ -63,10 +63,12 @@ namespace ClothingBrand.Application.Services
 
             };
            _unitRepository.categoryRepository.Add(catg);
+            _unitRepository.Save();
         }
         public void Remove(int id)
         {
            _unitRepository.categoryRepository.Remove(_unitRepository.categoryRepository.Get((x) => x.Id == id));
+            _unitRepository.Save();
 
         }
         public void update(int id, CreateCategoryDto categoryDto)
@@ -80,6 +82,7 @@ namespace ClothingBrand.Application.Services
 
             };
            _unitRepository.categoryRepository.Update(category);
+            _unitRepository.Save();
         }
     }
 }

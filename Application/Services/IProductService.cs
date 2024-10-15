@@ -21,7 +21,9 @@ namespace ClothingBrand.Application.Services
 
 
         public Task update(int id, ProductDTO productDTO);
-       
+        public IEnumerable<GETProductDTO> GetAllWithpagination(int page, int pageSize, Expression<Func<Product, bool>>? filter = null, string? includeProperties = null, bool tracked = false);
+
+
 
     }
 }

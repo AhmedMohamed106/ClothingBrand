@@ -42,6 +42,25 @@ namespace ClothingBrand.Application.Services
                 });
           return iList;
         }
+        public  IEnumerable<GETProductDTO> GetAllWithpagination(int page,int pageSize ,Expression<Func<Product, bool>>? filter = null, string? includeProperties = null, bool tracked = false)
+        {
+
+            var iList = _unitRepository.productRepository.GetAllWithPagaAsync(page , pageSize, filter, "Category,Discount", tracked)
+                .Select(e => new GETProductDTO
+                {
+                    CategoryName = e.Category.Name,
+                    Name = e.Name,
+                    Description = e.Description,
+                    Discount = (decimal)(e.Discount != null && DateTime.Now <= e.Discount.EndDate && DateTime.Now >= e.Discount.StartDate ? e.Discount.Percentage * e.Price : 0),
+                    Id = e.Id,
+                    Price = e.Price,
+                    ImageUrl = ApplicationUrl + imagesPath + e.ImageUrl,
+                    ISBN = e.ISBN,
+                    StockQuantity = e.StockQuantity,
+
+                });
+            return iList;
+        }
 
         public GETProductDTO GEtProduct(int id)
         {

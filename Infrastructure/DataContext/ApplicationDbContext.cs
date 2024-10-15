@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -42,6 +43,7 @@ namespace ClothingBrand.Infrastructure.DataContext
                 .WithMany(s => s.Enrollments)
                 .HasForeignKey(u => u.SewingCourseId);
 
+
             base.OnModelCreating(builder);
 
 
@@ -51,7 +53,7 @@ namespace ClothingBrand.Infrastructure.DataContext
         public DbSet<CustomClothingOrder> customClothingOrders { get; set; }
         public DbSet<Discount> Discounts { get; set; }
         public DbSet<Enrollment> Enrollments { get; set; }
-        public DbSet<Order> Orders { get; set; }
+       public DbSet<Order> Orders { get; set; }
         public DbSet<OrderItem> OrderItems { get; set; }
         public DbSet<Payment> Payments { get; set; }
         public DbSet<Product> Products { get; set; }

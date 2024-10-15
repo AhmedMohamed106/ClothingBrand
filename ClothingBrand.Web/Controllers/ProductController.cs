@@ -4,6 +4,7 @@ using ClothingBrand.Application.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ClothingBrand.Application.Contract;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ClothingBrand.Web.Controllers
 {
@@ -44,6 +45,7 @@ namespace ClothingBrand.Web.Controllers
 
             return Ok();
         }
+        [Authorize]
         [HttpGet("{id}")]
         public IActionResult Get(int id)
         {
@@ -150,6 +152,50 @@ namespace ClothingBrand.Web.Controllers
             //mailText = mailText.Replace("[username]", dto.Subject).Replace("[email]", dto.ToEmail);
             await _mailingService.SendEmailAsync(dto.ToEmail, dto.Subject, dto.Body,dto.Attachments);
             return Ok();
+        }
+
+
+        [HttpGet("pagination")]
+        public IActionResult pagination(int page,int pageSize,string CategoryName = null, decimal Maxprice = 0, decimal MinPrice = 0, string KeyWord = null)
+        {
+            if (ModelState.IsValid)
+            {
+                var products = _productService.GetAllWithpagination(page, pageSize);
+
+                if (CategoryName != null)
+                {
+                    products = products.Where(p => p.CategoryName == CategoryName);
+                }
+
+                if (Maxprice > 0)
+                {
+                    products = products.Where(p => p.Price < Maxprice);
+                }
+
+                if (MinPrice > 0)
+                {
+                    products = products.Where(p => p.Price > MinPrice);
+
+                }
+                if (KeyWord != null)
+                {
+                    products = products.Where(p => p.Price > MinPrice);
+
+                }
+
+
+
+                if (products.Any())
+                {
+
+                    return Ok(products);
+
+                }
+                return NoContent();
+            }
+
+            return BadRequest();
+
         }
 
     }
