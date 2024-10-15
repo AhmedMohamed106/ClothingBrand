@@ -1,10 +1,12 @@
 ﻿using ClothingBrand.Application.Common.DTO.Request.CustomOrderClothes;
+using ClothingBrand.Application.Common.DTO.Response.CustomOrderClothes;
 using ClothingBrand.Application.Services;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 
-[Route("api/[controller]")]
 [ApiController]
+[Route("api/[controller]")]
 public class CustomClothingOrderController : ControllerBase
 {
     private readonly ICustomClothingOrderService _customClothingOrderService;
@@ -14,22 +16,46 @@ public class CustomClothingOrderController : ControllerBase
         _customClothingOrderService = customClothingOrderService;
     }
 
-    // POST: api/CustomClothingOrder
+    [HttpGet]
+    public ActionResult<IEnumerable<CustomClothingOrderDto>> GetAllClothingOrders()
+    {
+        var orders = _customClothingOrderService.GetAllCustomClothingOrders();
+        return Ok(orders);
+    }
+
+    [HttpGet("{id:int}")]
+    public ActionResult<CustomClothingOrderDto> GetClothingOrderById(int id)
+    {
+        var order = _customClothingOrderService.GetCustomClothingOrderById(id);
+        if (order == null)
+        {
+            return NotFound($"Custom clothing order with ID {id} not found.");
+        }
+
+        return Ok(order);
+    }
+
     [HttpPost]
-    public IActionResult CreateCustomClothingOrder([FromBody] CreateCustomClothingOrderDto orderDto)
+    public ActionResult<CustomClothingOrderDto> CreateClothingOrder([FromForm] CreateCustomClothingOrderDto orderDto)
     {
         if (!ModelState.IsValid)
         {
             return BadRequest(ModelState);
         }
 
-        var createdOrder = _customClothingOrderService.CreateCustomClothingOrder(orderDto);
-        return CreatedAtAction(nameof(GetCustomClothingOrderById), new { id = createdOrder.Id }, createdOrder);
+        try
+        {
+            var createdOrder = _customClothingOrderService.CreateCustomClothingOrder(orderDto);
+            return CreatedAtAction(nameof(GetClothingOrderById), new { id = createdOrder.Id }, createdOrder);
+        }
+        catch (Exception)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while creating the order.");
+        }
     }
 
-    // PUT: api/CustomClothingOrder/{id}
-    [HttpPut("{id}")]
-    public IActionResult UpdateCustomClothingOrder(int id, [FromBody] UpdateCustomClothingOrderDto orderDto)
+    [HttpPut("{id:int}")]
+    public ActionResult<CustomClothingOrderDto> UpdateClothingOrder(int id, [FromForm] UpdateCustomClothingOrderDto orderDto)
     {
         if (!ModelState.IsValid)
         {
@@ -39,64 +65,57 @@ public class CustomClothingOrderController : ControllerBase
         try
         {
             var updatedOrder = _customClothingOrderService.UpdateCustomClothingOrder(id, orderDto);
+            if (updatedOrder == null)
+            {
+                return NotFound($"Custom clothing order with ID {id} not found.");
+            }
+
             return Ok(updatedOrder);
         }
-        catch (KeyNotFoundException ex)
+        catch (Exception)
         {
-            return NotFound(ex.Message);
+            return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while updating the order.");
         }
     }
 
-    // PATCH: api/CustomClothingOrder/{id}/status
-    [HttpPatch("{id}/status")]
-    public IActionResult UpdateCustomOrderStatus(int id, [FromBody] string newStatus)
-    {
-        try
-        {
-            var updatedOrder = _customClothingOrderService.UpdateCustomOrderStatus(id, newStatus);
-            return Ok(updatedOrder);
-        }
-        catch (KeyNotFoundException ex)
-        {
-            return NotFound(ex.Message);
-        }
-    }
-
-    // DELETE: api/CustomClothingOrder/{id}
-    [HttpDelete("{id}")]
-    public IActionResult DeleteCustomClothingOrder(int id)
+    [HttpDelete("{id:int}")]
+    public ActionResult DeleteClothingOrder(int id)
     {
         try
         {
             _customClothingOrderService.DeleteCustomClothingOrder(id);
             return NoContent();
         }
-        catch (KeyNotFoundException ex)
+        catch (KeyNotFoundException)
         {
-            return NotFound(ex.Message);
+            return NotFound($"Custom clothing order with ID {id} not found.");
+        }
+        catch (Exception)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while deleting the order.");
         }
     }
 
-    // GET: api/CustomClothingOrder/{id}
-    [HttpGet("{id}")]
-    public IActionResult GetCustomClothingOrderById(int id)
+    [HttpPatch("{id:int}/status")]
+    public ActionResult<CustomClothingOrderDto> UpdateClothingOrderStatus(int id, [FromBody] string newStatus)
     {
+        if (string.IsNullOrWhiteSpace(newStatus))
+        {
+            return BadRequest("New status cannot be null or empty.");
+        }
+
         try
         {
-            var order = _customClothingOrderService.GetCustomClothingOrderById(id);
-            return Ok(order);
+            var updatedOrder = _customClothingOrderService.UpdateCustomOrderStatus(id, newStatus);
+            return Ok(updatedOrder);
         }
-        catch (KeyNotFoundException ex)
+        catch (KeyNotFoundException)
         {
-            return NotFound(ex.Message);
+            return NotFound($"Custom clothing order with ID {id} not found.");
         }
-    }
-
-    // GET: api/CustomClothingOrder
-    [HttpGet]
-    public IActionResult GetAllCustomClothingOrders()
-    {
-        var orders = _customClothingOrderService.GetAllCustomClothingOrders();
-        return Ok(orders);
+        catch (Exception)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while updating the order status.");
+        }
     }
 }

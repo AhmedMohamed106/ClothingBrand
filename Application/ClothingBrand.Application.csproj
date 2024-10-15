@@ -7,7 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Behaviours\" />
     <Folder Include="Common\DTO\Request\Shipping\" />
     <Folder Include="Common\DTO\Request\ShoppingCart\" />
     <Folder Include="Validators\" />
