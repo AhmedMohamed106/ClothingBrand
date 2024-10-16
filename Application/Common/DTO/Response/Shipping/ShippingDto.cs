@@ -11,7 +11,6 @@ namespace ClothingBrand.Application.Common.DTO.Response.Shipping
 {
     public class ShippingDto
     {
-        public int Id { get; set; }
         public string AddressLine1 { get; set; }
         public string AddressLine2 { get; set; }
         public string City { get; set; }
@@ -19,7 +18,7 @@ namespace ClothingBrand.Application.Common.DTO.Response.Shipping
         public string PostalCode { get; set; }
         public string Country { get; set; }
         public string ShippingMethod { get; set; } // Shipping type like Standard, Express
-        public decimal ShippingCost { get; set; }
+
     }
 
 

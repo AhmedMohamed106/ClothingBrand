@@ -136,8 +136,8 @@ namespace ClothingBrand.WebApi.Controllers
 
             PaymentDto paymentDetailsDto = new PaymentDto
             {
-                Amount = checkoutRequest.PaymentDto.Amount,
-               Currency = checkoutRequest.PaymentDto.Currency,
+               // Amount = checkoutRequest.PaymentDto.Amount,
+               //Currency = checkoutRequest.PaymentDto.Currency,
                PaymentMethodId = checkoutRequest.PaymentDto.PaymentMethodId
             };
 
