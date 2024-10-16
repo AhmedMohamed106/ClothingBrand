@@ -19,7 +19,7 @@ namespace ClothingBrand.Domain.Models
         public int ProductId { get; set; }
         public virtual Product Product { get; set; }
         public int Quantity { get; set; }
-        public decimal Price => Product.Price;
+        public decimal Price { get; set; }
     }
 
 }

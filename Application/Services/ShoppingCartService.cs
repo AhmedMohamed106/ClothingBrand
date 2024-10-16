@@ -26,66 +26,97 @@ namespace ClothingBrand.Application.Services
         public ShoppingCartDto GetShoppingCart(string userId)
         {
             // Retrieve the user's shopping cart
-            var cart = _unitOfWork.shoppingCartRepository.Get(c => c.UserId == userId , includeProperties: "ShoppingCartItems.Product");
+            var cart = _unitOfWork.shoppingCartRepository.Get(c => c.UserId == userId , includeProperties: "ShoppingCartItems.Product" , tracked:true);
+
+            if(cart == null)
+            {
+                return null;
+            }
+
             return new ShoppingCartDto
             {
+                Id = cart.Id,
                 TotalPrice = cart.TotalPrice,
+                UserId = cart.UserId,
                 ShoppingCartItems = cart.ShoppingCartItems.Select(item => new ShoppingCartItemDto
                 {
+                    Id = item.Id,
                     ProductId = item.ProductId,
                     Quantity = item.Quantity,
-                    ProductName = item.Product.Name,
-                    Price = item.Price
+                    ProductName = item.Product != null ? item.Product.Name : "Unknown", // Safe null check
+                    Price = item.Price,
+                    imageUrl = item.Product?.ImageUrl,
+                    ShoppingCartId = item.ShoppingCartId
+                    
                 }).ToList()
             };
+
         }
 
         public void AddToCart(string userId, ShoppingCartItemDto item)
         {
-            var product = _unitOfWork.productRepository.Get(p => p.Id == item.ProductId);
+            var user = _unitOfWork.applicationUserRepository.Get(u => u.Id == userId , tracked: true);
+            if (user == null)
+            {
+                throw new Exception("User not found.");
+            }
+            // Get the product from the repository
+            var product = _unitOfWork.productRepository.Get(p => p.Id == item.ProductId , tracked: true);
             if (product == null)
             {
                 throw new Exception("Product not found.");
             }
 
-           
-            // Add item to the shopping cart
-            var cart = _unitOfWork.shoppingCartRepository.Get(c => c.UserId == userId);
+            // Retrieve or create the shopping cart with ShoppingCartItems and Product included
+            var cart = _unitOfWork.shoppingCartRepository.Get(
+                c => c.UserId == userId,
+                includeProperties: "ShoppingCartItems.Product" , tracked: true
+            );
+
             if (cart == null)
             {
                 // Create a new cart if it doesn't exist
-                cart = new ShoppingCart { UserId = userId };
+                cart = new ShoppingCart
+                {
+                    UserId = userId,
+                    ShoppingCartItems = new List<ShoppingCartItem>()
+                };
                 _unitOfWork.shoppingCartRepository.Add(cart);
             }
-            item.ProductName = product.Name;
-            item.Price = product.Price;
 
-            // Update cart item quantity or add new item
+            // Check if the item already exists in the cart
             var existingItem = cart.ShoppingCartItems.FirstOrDefault(i => i.ProductId == item.ProductId);
             if (existingItem != null)
             {
+                // Update the quantity of the existing item
                 existingItem.Quantity += item.Quantity;
+                // Optionally, update the price if product prices can change dynamically
+                existingItem.Price = product.Price;
             }
             else
             {
-                cart.ShoppingCartItems.Add(new ShoppingCartItem
+                // Add the new item to the cart using navigation property
+                var cartItem = new ShoppingCartItem
                 {
+                    Id = item.Id,
                     ProductId = item.ProductId,
+                    ShoppingCartId = item.ShoppingCartId,
                     Quantity = item.Quantity,
-                    ShoppingCartId = item.ShoppingCartId
-                    //Price = item.Price // Assume price is the price per item
-                });
+                    Product = product,       // Establish relationship via navigation property
+                    Price = product.Price    // Set price based on the product
+                };
+                cart.ShoppingCartItems.Add(cartItem);
             }
 
-            
-            
+            // Save changes to the database
             _unitOfWork.Save();
         }
+
 
         public void RemoveFromCart(string userId, int productId)
         {
             // Retrieve the shopping cart
-            var cart = _unitOfWork.shoppingCartRepository.Get(c => c.UserId == userId);
+            var cart = _unitOfWork.shoppingCartRepository.Get(c => c.UserId == userId, includeProperties: "ShoppingCartItems", tracked: true);
             if (cart == null)
             {
                 throw new Exception("Shopping cart not found.");
@@ -101,6 +132,7 @@ namespace ClothingBrand.Application.Services
             }
             else
             {
+                var itemIdsInCart = cart.ShoppingCartItems.Select(i => i.ProductId).ToList();
                 throw new Exception("Item not found in the shopping cart.");
             }
         }
@@ -108,7 +140,7 @@ namespace ClothingBrand.Application.Services
         public decimal GetTotalPriceWithShipping(string userId, ShippingDto shippingDetails)
         {
             // Retrieve the shopping cart
-            var cart = _unitOfWork.shoppingCartRepository.Get(c => c.UserId == userId);
+            var cart = _unitOfWork.shoppingCartRepository.Get(c => c.UserId == userId, tracked: true);
             if (cart == null)
             {
                 throw new Exception("Shopping cart not found.");
@@ -135,7 +167,11 @@ namespace ClothingBrand.Application.Services
                 case "International":
                     shippingCost = 20.00m; // Example: rate for international shipping
                     break;
+                case "NA":
+                    shippingCost = 0m;
+                    break;
                 default:
+                    
                     throw new Exception("Unknown shipping method.");
             }
 
@@ -147,26 +183,43 @@ namespace ClothingBrand.Application.Services
         {
             // Retrieve shopping cart
             var cart = GetShoppingCart(userId);
-            if (cart.ShoppingCartItems.Count == 0)
+            if (cart == null || cart.ShoppingCartItems == null || cart.ShoppingCartItems.Count == 0)
             {
-                throw new Exception("Shopping cart is empty.");
+                throw new Exception("Shopping cart is empty or not initialized.");
             }
 
-            decimal totalPrice = GetTotalPriceWithShipping(userId, shippingDetails);
+            // Check if shipping details are provided
+            if (shippingDetails == null)
+            {
+                throw new Exception("Shipping details are required.");
+            }
 
-            paymentDto.Amount = totalPrice;
+            // Calculate total price including shipping
+            decimal shippingCost = CalculateShippingCost(shippingDetails); // Assuming you have this method
+            decimal totalPrice = cart.TotalPrice + shippingCost;
+
+            paymentDto.Amount = (long)( totalPrice * 100);  // converts dollars to cents
+
             // Create the order
             var order = _orderService.CreateOrder(userId, cart, shippingDetails);
+            if (order == null)
+            {
+                throw new Exception("Failed to create the order.");
+            }
 
             // Process payment
-            var paymentResult = _paymentService.ProcessPayment(paymentDto);
+            var paymentResult = _paymentService.ProcessPayment(paymentDto).Result;
             if (!paymentResult.IsSuccessful)
             {
                 throw new Exception(paymentResult.Message);
             }
+            UpdateOrderStatusDto orderstatus = new UpdateOrderStatusDto();
 
+            orderstatus.OrderStatus = "Confirmed";
+            
             // Update payment status on order
             _orderService.UpdatePaymentStatus(order.OrderId, "Paid");
+            _orderService.UpdateOrderStatus(order.OrderId, orderstatus);
 
             // Clear shopping cart after successful checkout
             ClearCart(userId);
@@ -174,10 +227,12 @@ namespace ClothingBrand.Application.Services
             return order;
         }
 
+
+
         public void ClearCart(string userId)
         {
             // Clear the shopping cart
-            var cart = _unitOfWork.shoppingCartRepository.Get(c => c.UserId == userId);
+            var cart = _unitOfWork.shoppingCartRepository.Get(c => c.UserId == userId, tracked: true);
             if (cart != null)
             {
                 _unitOfWork.shoppingCartRepository.Remove(cart);

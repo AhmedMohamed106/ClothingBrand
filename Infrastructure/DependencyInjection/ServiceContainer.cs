@@ -1,10 +1,13 @@
 ﻿using Application.interfaces;
+using ClothingBrand.Application.Behaviours;
 using ClothingBrand.Application.Common.Interfaces;
+using ClothingBrand.Application.Contract;
 using ClothingBrand.Application.Services;
 using ClothingBrand.Application.Settings;
 using ClothingBrand.Domain.Models;
 using ClothingBrand.Infrastructure.DataContext;
 using ClothingBrand.Infrastructure.Emails;
+using ClothingBrand.Infrastructure.File;
 using ClothingBrand.Infrastructure.Repository;
 using infrastructure.Repos;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -82,7 +85,7 @@ namespace ClothingBrand.Infrastructure.DependencyInjection
             services.AddScoped<IOrderService, OrderService>();
             services.AddScoped<IShoppingCartService, ShoppingCartService>();
             services.AddScoped<IPaymentService, PaymentService>();
-
+            services.AddScoped<ICustomClothingOrderService, CustomClothingOrderService>();
             services.AddScoped<IAccount, AccountRepository>();
             services.AddScoped<IProductRepository, ProductRepository>();
             services.AddScoped<ICategoryRepository, CategoryRepository>();
@@ -93,6 +96,12 @@ namespace ClothingBrand.Infrastructure.DependencyInjection
 
 
 
+            services.AddScoped<IcategoryService, CategoryService>();
+            services.AddScoped<IProductService, ProductService>();
+            services.AddScoped<IDiscountService, DiscountService>();
+            services.AddTransient<IEmailService, EmailService>();
+            services.AddScoped<IFileService, FileService>();
+            services.AddSingleton<IAppConfiguration, AppConfiguration>();
             services.Configure<MailSettings>(config.GetSection("MailSettings"));
             services.AddAuthentication().AddGoogle(option
                 =>

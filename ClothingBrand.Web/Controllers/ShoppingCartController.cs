@@ -5,20 +5,28 @@ using ClothingBrand.Application.Common.DTO.Response.ShoppingCart;
 using ClothingBrand.Application.Common.Interfaces;
 using ClothingBrand.Application.Services;
 using ClothingBrand.Web.helpers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System;
+using System.Security.Claims;
 
 namespace ClothingBrand.WebApi.Controllers
 {
+    //[Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class ShoppingCartController : ControllerBase
     {
         private readonly IShoppingCartService _shoppingCartService;
+        private readonly ILogger<ShoppingCartController> _logger;
 
-        public ShoppingCartController(IShoppingCartService shoppingCartService)
+
+        public ShoppingCartController(IShoppingCartService shoppingCartService , ILogger<ShoppingCartController> logger)
         {
             _shoppingCartService = shoppingCartService;
+            _logger = logger;
+
         }
 
         // GET: api/shoppingcart/{userId}
@@ -36,16 +44,24 @@ namespace ClothingBrand.WebApi.Controllers
             }
         }
 
-        // POST: api/shoppingcart/add
+       //[Authorize]
         [HttpPost("add")]
-        public IActionResult AddToCart(string userId, [FromBody] AddToCartRequestDto request)
+        public IActionResult AddToCart(string userId , [FromBody] AddToCartRequestDto request)
         {
+            //var userId = HttpContext.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            //if (string.IsNullOrEmpty(userId))
+            //{
+            //    return Unauthorized("User ID not found.");
+            //}
 
 
             ShoppingCartItemDto requestDto = new ShoppingCartItemDto
             {
                 ProductId = request.ProductId,
                 Quantity = request.Quantity
+                ,ShoppingCartId = request.ShoppingCartId
+           
+              
             };
 
             try
@@ -55,7 +71,10 @@ namespace ClothingBrand.WebApi.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                // Log the detailed error
+                _logger.LogError(ex, "Error adding item to cart for user {UserId}", userId);
+                // Return a generic error message
+                return BadRequest("An error occurred while adding the item to the cart.");
             }
         }
 
@@ -75,9 +94,35 @@ namespace ClothingBrand.WebApi.Controllers
         }
 
         // POST: api/shoppingcart/checkout
-        [HttpPost("checkout/{userId}")]
-        public IActionResult Checkout(string userId, [FromBody] CheckoutRequestDto checkoutRequest)
+       // [Authorize]
+        [HttpPost("checkout")]
+        public IActionResult Checkout([FromBody] CheckoutRequestDto checkoutRequest)
         {
+            if (checkoutRequest == null)
+            {
+                return BadRequest("Invalid request.");
+            }
+
+            if (string.IsNullOrWhiteSpace(checkoutRequest.userId))
+            {
+                return BadRequest("User ID is required.");
+            }
+
+            if (checkoutRequest.ShippingDetails == null)
+            {
+                return BadRequest("Shipping details are required.");
+            }
+
+            if (checkoutRequest.PaymentDto == null)
+            {
+                return BadRequest("Payment details are required.");
+            }
+            //var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            //if (string.IsNullOrEmpty(userId))
+            //{
+            //    return Unauthorized("User not authenticated.");
+            //}
+
             ShippingDto checkoutShippingRequestDto = new ShippingDto
             {
                 AddressLine1 = checkoutRequest.ShippingDetails.AddressLine1,
@@ -89,27 +134,29 @@ namespace ClothingBrand.WebApi.Controllers
                 State = checkoutRequest.ShippingDetails.State
             };
 
-            PaymentDto PaymentDetailsDto = new PaymentDto
+            PaymentDto paymentDetailsDto = new PaymentDto
             {
-                CardNumber = checkoutRequest.PaymentDetails.CardNumber,
-                ExpirationMonth = checkoutRequest.PaymentDetails.ExpirationMonth,
-                ExpirationYear = checkoutRequest.PaymentDetails.ExpirationYear,
-                Cvc = checkoutRequest.PaymentDetails.Cvc
+                Amount = checkoutRequest.PaymentDto.Amount,
+               Currency = checkoutRequest.PaymentDto.Currency,
+               PaymentMethodId = checkoutRequest.PaymentDto.PaymentMethodId
             };
 
             try
             {
-                var order = _shoppingCartService.Checkout(userId, checkoutShippingRequestDto, PaymentDetailsDto);
+                var order = _shoppingCartService.Checkout(checkoutRequest.userId, checkoutShippingRequestDto, paymentDetailsDto);
                 return Ok(order);
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                // Log the detailed error
+                _logger.LogError(ex, "Error during checkout for user {UserId}", checkoutRequest.userId);
+                // Return a generic error message
+                return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
 
-        // DELETE: api/shoppingcart/clear/{userId}
-        [HttpDelete("clear/{userId}")]
+    // DELETE: api/shoppingcart/clear/{userId}
+    [HttpDelete("clear/{userId}")]
         public IActionResult ClearCart(string userId)
         {
             try

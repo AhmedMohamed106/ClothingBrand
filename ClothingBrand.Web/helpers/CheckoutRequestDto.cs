@@ -5,7 +5,8 @@ namespace ClothingBrand.Web.helpers
 {
     public class CheckoutRequestDto
     {
-        public CheckoutShippingDto ShippingDetails { get; set; }
-        public PaymentDetailsDto PaymentDetails { get; set; }
+        public string userId { get; set; }
+        public ShippingDto ShippingDetails { get; set; }
+        public PaymentDto PaymentDto { get; set; }
     }
 }

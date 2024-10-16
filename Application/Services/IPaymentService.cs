@@ -1,4 +1,5 @@
 ﻿using ClothingBrand.Application.Common.DTO.Response.Payment;
+using Stripe;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,7 @@ namespace ClothingBrand.Application.Services
 {
     public interface IPaymentService
     {
-        public PaymentResultDto ProcessPayment(PaymentDto paymentDto);
+        public Task<PaymentResultDto> ProcessPayment(PaymentDto paymentDto);
     }
 
 }
