@@ -90,7 +90,7 @@ namespace ClothingBrand.Application.Services
                 
 
             };
-            _unitRepository.sewingCourseRepository.Update(course);
+            _unitRepository.sewingCourseRepository.Update(course,id);
             _unitRepository.Save();
         }
     }

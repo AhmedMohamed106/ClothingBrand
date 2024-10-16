@@ -38,7 +38,7 @@ namespace ClothingBrand.Infrastructure.DependencyInjection
           //  services.AddIdentityCore<ApplicationUser>(opt=>opt.SignIn.RequireConfirmedEmail=true).AddRoles<IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>().AddSignInManager();
           services.AddIdentity<ApplicationUser,IdentityRole>(options =>
           {
-              options.SignIn.RequireConfirmedEmail = true;
+              options.SignIn.RequireConfirmedEmail = false;
           }).AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
          services.Configure<DataProtectionTokenProviderOptions>(options =>
             {
@@ -88,6 +88,11 @@ namespace ClothingBrand.Infrastructure.DependencyInjection
             services.AddScoped<ICategoryRepository, CategoryRepository>();
             services.AddScoped<IDiscountRepository, DiscountRepository>();
             services.AddScoped<ICourseService, CourseService>();
+            services.AddScoped<IEnrollmentCourseService, EnrollmentCourseService>();
+
+
+
+
             services.Configure<MailSettings>(config.GetSection("MailSettings"));
             services.AddAuthentication().AddGoogle(option
                 =>

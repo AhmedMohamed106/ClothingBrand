@@ -10,6 +10,6 @@ namespace ClothingBrand.Application.Common.DTO.EnrollmentDto
     {
         public string UserId { get; set; }
         public int CourseId { get; set; }
-        public string EnrollDate { get; set; }
+        public DateTime EnrollDate { get; set; }=DateTime.Now;
     }
 }

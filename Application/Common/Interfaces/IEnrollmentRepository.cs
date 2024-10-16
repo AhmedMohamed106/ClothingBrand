@@ -11,5 +11,6 @@ namespace ClothingBrand.Application.Common.Interfaces
     {
         IEnumerable<ApplicationUser> GetUserEnrollInCourse(int CourseId);
         IEnumerable<SewingCourse> GetCoursesForUser(string UserId);
+        
     }
 }

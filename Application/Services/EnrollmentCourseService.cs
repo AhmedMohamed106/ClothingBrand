@@ -1,4 +1,5 @@
-﻿using ClothingBrand.Application.Common.DTO.course;
+﻿using Application.DTOs.Response.Account;
+using ClothingBrand.Application.Common.DTO.course;
 using ClothingBrand.Application.Common.DTO.EnrollmentDto;
 using ClothingBrand.Application.Common.Interfaces;
 using ClothingBrand.Domain.Models;
@@ -26,17 +27,16 @@ namespace ClothingBrand.Application.Services
                 {
                     CourseId=e.SewingCourseId,
                     EnrollDate=e.EnrollDate.ToString(),
-                    UserId=e.ApplicationUserId
+                    UserId=e.ApplicationUserId,
+                    Users = new List<string> { e.ApplicationUser?.UserName ?? string.Empty },
+                    Courses= new List<string> { e.SewingCourse?.Title ?? string.Empty }
                     
-
-
-
-
                 });
+         
             return iList;
         }
 
-        public EnrollDto GetCourse(int courseId,string userId)
+        public EnrollDto GetEnrollCourse(int courseId,string userId)
         {
             var course = _unitRepository.enrollmentRepository.Get((x) => x.ApplicationUserId == userId&&x.SewingCourseId==courseId);
 
@@ -44,7 +44,9 @@ namespace ClothingBrand.Application.Services
             {
                 CourseId = course.SewingCourseId,
                 EnrollDate = course.EnrollDate.ToString(),
-                UserId = course.ApplicationUserId
+                UserId = course.ApplicationUserId,
+                Users = new List<string> { course.ApplicationUser?.UserName ?? string.Empty },
+                Courses = new List<string> { course.SewingCourse?.Title ?? string.Empty }
 
 
 
@@ -75,21 +77,42 @@ namespace ClothingBrand.Application.Services
             _unitRepository.Save();
 
         }
-        //public void update(int id, CreateCourse courseDto)
-        //{
-        //    var course = new SewingCourse()
-        //    {
+        public IEnumerable<courseDto> GetCoursesForUser(string UserId)
+        {
+           var courses= _unitRepository.enrollmentRepository.GetCoursesForUser(UserId);
+            var courseDtos=new List<courseDto>() ;
+            foreach (var course in courses)
+            {
+                var corDTo = new courseDto()
+                {
+                    Description = course.Description,
+                    Duration = course.Duration,
+                    Id = course.Id,
+                    Price = course.Price,
+                    Title = course.Title
 
-        //        Title = courseDto.Title,
-        //        Description = courseDto.Description,
-        //        Price = courseDto.Price,
-        //        Duration = courseDto.Duration
+                };
+                courseDtos.Add(corDTo);
+            }
+            return courseDtos;
+        }
 
+        public IEnumerable<UserClaims> GetUserEnrollInCourse(int CourseId)
+        {
+            var users = _unitRepository.enrollmentRepository.GetUserEnrollInCourse(CourseId);
+            var usersDtos = new List<UserClaims>();
+            foreach (var user in users)
+            {
+                var userDTo = new UserClaims()
+                {
+                    Email=user.Email,
+                    Fullname=user.Name,
+                    UserName=user.UserName
 
-
-        //    };
-        //    _unitRepository.enrollmentRepository.Update(course);
-        //    _unitRepository.Save();
-        //}
+                };
+                usersDtos.Add(userDTo);
+            }
+            return usersDtos;
+        }
     }
 }

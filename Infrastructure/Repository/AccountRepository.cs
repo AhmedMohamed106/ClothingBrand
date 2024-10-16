@@ -70,6 +70,7 @@ namespace infrastructure.Repos
 
                     new Claim(ClaimTypes.Email, user.Email),
                     new Claim(ClaimTypes.Role, (await userManager.GetRolesAsync(user)).FirstOrDefault().ToString()),
+                     new Claim(ClaimTypes.NameIdentifier,user.Id),
                     new Claim("FullName", user.Name)
                 };
 
@@ -149,7 +150,7 @@ namespace infrastructure.Repos
                     return new GeneralResponse(false, error);
 
                 }
-                await SendConfirmationEmail(user);
+              //  await SendConfirmationEmail(user);
                 
               return  await AssignUserToRoleAsync(user,new IdentityRole() { Name=model.Role });
 
@@ -227,7 +228,15 @@ namespace infrastructure.Repos
                 {
                     return new LoginResponse(false, "invalid Login");
                 }
-                if (!signInResult.Succeeded) return new LoginResponse(false, "invalid Login");
+
+                if (!signInResult.Succeeded)
+                {
+                    //if (!user.EmailConfirmed)
+                    //{
+                    //    return new LoginResponse(false, "You need To Confirm Email");
+                    //}
+                    return new LoginResponse(false, "invalid Login");
+                }
                 string token = await GenerateToken(user);
                 string refreshToken = GenerateRefreshToken();
                 if (token is null || refreshToken is null) return new LoginResponse(false, "invalid Login");

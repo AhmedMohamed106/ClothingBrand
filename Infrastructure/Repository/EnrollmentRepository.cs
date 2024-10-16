@@ -24,7 +24,6 @@ namespace ClothingBrand.Infrastructure.Repository
             return _db.Enrollments
            .Where(uc => uc.ApplicationUserId == UserId)
            .Select(uc => uc.SewingCourse)
-           .Include(c => c.Enrollments)
            .ToList();
         }
 
@@ -33,7 +32,6 @@ namespace ClothingBrand.Infrastructure.Repository
             return _db.Enrollments
            .Where(uc => uc.SewingCourseId == CourseId)
            .Select(uc => uc.ApplicationUser)
-           .Include(c => c.Enrollments)
            .ToList();
         }
     }

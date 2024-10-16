@@ -18,9 +18,9 @@ namespace ClothingBrand.Infrastructure.Repository
             _db = db;
         }
 
-        public void Update(SewingCourse sewingCourse)
+        public void Update(SewingCourse sewingCourse,int id)
         {
-            var courseindb= _db.SewingCourses.FirstOrDefault(c=>c.Id==sewingCourse.Id);
+            var courseindb= _db.SewingCourses.FirstOrDefault(c=>c.Id==id);
             if (courseindb != null)
             {
                 courseindb.Title = sewingCourse.Title;
