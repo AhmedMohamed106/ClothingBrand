@@ -39,7 +39,7 @@ public class CustomClothingOrderController : ControllerBase
     }
 
     [HttpPost]
-    [Authorize(Roles = "user")] // Users only
+    [Authorize(Roles = "user,Admin")] // Both Users and Admins
     public ActionResult<CustomClothingOrderDto> CreateClothingOrder([FromForm] CreateCustomClothingOrderDto orderDto)
     {
         if (!ModelState.IsValid)
