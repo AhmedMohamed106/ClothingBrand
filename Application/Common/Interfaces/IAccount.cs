@@ -1,6 +1,7 @@
 ﻿using Application.DTOs.Request.Account;
 using Application.DTOs.Response;
 using Application.DTOs.Response.Account;
+using ClothingBrand.Application.Common.DTO.Request.Account;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -22,11 +23,13 @@ namespace Application.interfaces
         Task<IEnumerable<GetUserWithRolesDTo>> GetUsersWithRoleAsync();
         Task<GeneralResponse> ChangeUserRoleAsync(ChangeRoleDto model);
         Task<LoginResponse> RefreshTokenAsync(RefreshTockenDto model);
-       // Task<GeneralResponse> ConfirmEmail(string userID, string Token);
+        Task<GeneralResponse> ConfirmEmail(string userID, string Token);
         Task<GeneralResponse> RemoveUser(string id);
         Task<GeneralResponse> LogOut(string userId);
         Task SendEmail(string userId);
-
+        Task<GeneralResponse> ResetPassword(string userId, string token, string password);
+         Task ForgetPassword(string userEmail);
+        Task<GeneralResponse> ChangePassword(ChangePasswordDTO changePasswordDTO);
 
 
     }

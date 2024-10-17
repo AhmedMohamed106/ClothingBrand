@@ -1,5 +1,6 @@
 ﻿using ClothingBrand.Application.Common.DTO.course;
 using ClothingBrand.Application.Common.Interfaces;
+using ClothingBrand.Application.Services;
 using ClothingBrand.Domain.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -10,33 +11,29 @@ namespace ClothingBrand.Web.Controllers
     [ApiController]
     public class CourseController : ControllerBase
     {
-        private readonly IUnitOfWork unitOfWork;
-        public CourseController(IUnitOfWork unitOfWork)
+        private readonly ICourseService _courseService;
+        public CourseController(ICourseService courseService)
         {
-            this.unitOfWork = unitOfWork;
+            this._courseService = courseService;
         }
 
         [HttpGet]
         public IActionResult GetAll()
         {
-            var courses = unitOfWork.sewingCourseRepository.GetAll();
-            var courseDTO = new List<courseDto>();
-            foreach (var course in courses)
-            {
-                courseDTO.Add(new courseDto { Id = course.Id, Title = course.Title, Description = course.Description, Price = course.Price, Duration = course.Duration });
-            }
+            var courses = _courseService.GetAll();
+           
 
-            return Ok(courseDTO);
+            return Ok(courses);
         }
         [HttpPost]
-        public IActionResult Create(SewingCourse course)
+        public IActionResult Create(CreateCourse course)
         {
             if (ModelState.IsValid)
             {
                 try
                 {
-                    unitOfWork.sewingCourseRepository.Add(course);
-                    unitOfWork.Save();
+                    _courseService.AddCourse(course);
+                    
                     return Ok();
                 }
                 catch (Exception e)
@@ -50,18 +47,17 @@ namespace ClothingBrand.Web.Controllers
 
         [HttpPut]
         [Route("{id:int}")]
-        public IActionResult Update(int id, SewingCourse course)
+        public IActionResult Update(int id, CreateCourse course)
         {
             if (ModelState.IsValid)
             {
-                var oldcourse = unitOfWork.sewingCourseRepository.Get(x => x.Id == id);
+               
 
-                if (oldcourse == null)
-                    return BadRequest();
+               
                 try
                 {
-                    unitOfWork.sewingCourseRepository.Update(course);
-                    unitOfWork.Save();
+                    _courseService.update(id,course);
+                   
                     return Ok();
                 }
                 catch (Exception e)
@@ -75,17 +71,13 @@ namespace ClothingBrand.Web.Controllers
 
         [HttpDelete]
         [Route("{id:int}")]
-        public IActionResult Delete(int? id)
+        public IActionResult Delete(int id)
         {
-            if (id == null)
-                return BadRequest();
-            var course = unitOfWork.sewingCourseRepository.Get(c => c.Id == id); //GetAll().Where(c=>c.Id==id).FirstOrDefault();
-            if (course == null)
-                return BadRequest();
+          
             try
             {
-                unitOfWork.sewingCourseRepository.Remove(course);
-                unitOfWork.Save();
+                _courseService.Remove(id);
+                
                 return Ok();
             }
             catch (Exception e)
@@ -94,6 +86,13 @@ namespace ClothingBrand.Web.Controllers
             }
 
 
+        }
+
+        [HttpGet("{id}")]
+        public IActionResult Get(int id)
+        {
+            var course = _courseService.GetCourse(id);
+            return Ok(course);
         }
 
 

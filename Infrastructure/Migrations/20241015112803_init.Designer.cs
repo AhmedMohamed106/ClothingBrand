@@ -12,8 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ClothingBrand.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241011163042_Creating Database")]
-    partial class CreatingDatabase
+
+    [Migration("20241015112803_init")]
+    partial class init
+
+
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

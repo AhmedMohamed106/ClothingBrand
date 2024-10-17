@@ -41,7 +41,7 @@ namespace ClothingBrand.Infrastructure.DependencyInjection
           //  services.AddIdentityCore<ApplicationUser>(opt=>opt.SignIn.RequireConfirmedEmail=true).AddRoles<IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>().AddSignInManager();
           services.AddIdentity<ApplicationUser,IdentityRole>(options =>
           {
-              options.SignIn.RequireConfirmedEmail = true;
+              options.SignIn.RequireConfirmedEmail = false;
           }).AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
          services.Configure<DataProtectionTokenProviderOptions>(options =>
             {
@@ -68,6 +68,9 @@ namespace ClothingBrand.Infrastructure.DependencyInjection
                     ValidAudience = config["Jwt:ValidAudiance"],
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Secret"]!))
                 };
+
+
+
             });
             services.AddAuthentication();
             services.AddAuthorization();
@@ -87,6 +90,12 @@ namespace ClothingBrand.Infrastructure.DependencyInjection
             services.AddScoped<IProductRepository, ProductRepository>();
             services.AddScoped<ICategoryRepository, CategoryRepository>();
             services.AddScoped<IDiscountRepository, DiscountRepository>();
+            services.AddScoped<ICourseService, CourseService>();
+            services.AddScoped<IEnrollmentCourseService, EnrollmentCourseService>();
+
+
+
+
             services.AddScoped<IcategoryService, CategoryService>();
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<IDiscountService, DiscountService>();
@@ -94,6 +103,13 @@ namespace ClothingBrand.Infrastructure.DependencyInjection
             services.AddScoped<IFileService, FileService>();
             services.AddSingleton<IAppConfiguration, AppConfiguration>();
             services.Configure<MailSettings>(config.GetSection("MailSettings"));
+            services.AddAuthentication().AddGoogle(option
+                =>
+            {
+                IConfigurationSection googleAuthSection = config.GetSection("Auth:Google");
+                option.ClientId = googleAuthSection["ClientId"];
+                option.ClientSecret = googleAuthSection["ClientSecret"];
+            });
 
             return services;
         }

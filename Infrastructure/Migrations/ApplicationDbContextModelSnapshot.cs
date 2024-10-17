@@ -107,7 +107,7 @@ namespace ClothingBrand.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categories");
+                    b.ToTable("Categories", (string)null);
                 });
 
             modelBuilder.Entity("ClothingBrand.Domain.Models.CustomClothingOrder", b =>
@@ -145,10 +145,6 @@ namespace ClothingBrand.Infrastructure.Migrations
                     b.Property<double>("HipCircumference")
                         .HasColumnType("float");
 
-                    b.Property<string>("ImageUrl")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<double>("ModelLength")
                         .HasColumnType("float");
 
@@ -169,7 +165,7 @@ namespace ClothingBrand.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("customClothingOrders");
+                    b.ToTable("customClothingOrders", (string)null);
                 });
 
             modelBuilder.Entity("ClothingBrand.Domain.Models.Discount", b =>
@@ -194,7 +190,7 @@ namespace ClothingBrand.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Discounts");
+                    b.ToTable("Discounts", (string)null);
                 });
 
             modelBuilder.Entity("ClothingBrand.Domain.Models.Enrollment", b =>
@@ -212,7 +208,7 @@ namespace ClothingBrand.Infrastructure.Migrations
 
                     b.HasIndex("ApplicationUserId");
 
-                    b.ToTable("Enrollments");
+                    b.ToTable("Enrollments", (string)null);
                 });
 
             modelBuilder.Entity("ClothingBrand.Domain.Models.Order", b =>
@@ -250,7 +246,7 @@ namespace ClothingBrand.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Orders");
+                    b.ToTable("Orders", (string)null);
                 });
 
             modelBuilder.Entity("ClothingBrand.Domain.Models.OrderItem", b =>
@@ -279,7 +275,7 @@ namespace ClothingBrand.Infrastructure.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("OrderItems");
+                    b.ToTable("OrderItems", (string)null);
                 });
 
             modelBuilder.Entity("ClothingBrand.Domain.Models.Payment", b =>
@@ -313,7 +309,7 @@ namespace ClothingBrand.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Payments");
+                    b.ToTable("Payments", (string)null);
                 });
 
             modelBuilder.Entity("ClothingBrand.Domain.Models.Product", b =>
@@ -358,7 +354,7 @@ namespace ClothingBrand.Infrastructure.Migrations
 
                     b.HasIndex("DiscountId");
 
-                    b.ToTable("Products");
+                    b.ToTable("Products", (string)null);
                 });
 
             modelBuilder.Entity("ClothingBrand.Domain.Models.RefreshTocken", b =>
@@ -377,7 +373,7 @@ namespace ClothingBrand.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("RefreshTokens");
+                    b.ToTable("RefreshTokens", (string)null);
                 });
 
             modelBuilder.Entity("ClothingBrand.Domain.Models.SewingCourse", b =>
@@ -405,7 +401,7 @@ namespace ClothingBrand.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("SewingCourses");
+                    b.ToTable("SewingCourses", (string)null);
                 });
 
             modelBuilder.Entity("ClothingBrand.Domain.Models.Shipping", b =>
@@ -448,7 +444,7 @@ namespace ClothingBrand.Infrastructure.Migrations
 
                     b.HasKey("ShippingId");
 
-                    b.ToTable("Shippings");
+                    b.ToTable("Shippings", (string)null);
                 });
 
             modelBuilder.Entity("ClothingBrand.Domain.Models.ShoppingCart", b =>
@@ -468,7 +464,7 @@ namespace ClothingBrand.Infrastructure.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("shoppingCarts");
+                    b.ToTable("shoppingCarts", (string)null);
                 });
 
             modelBuilder.Entity("ClothingBrand.Domain.Models.ShoppingCartItem", b =>
@@ -497,7 +493,7 @@ namespace ClothingBrand.Infrastructure.Migrations
 
                     b.HasIndex("ShoppingCartId");
 
-                    b.ToTable("ShoppingCartItems");
+                    b.ToTable("ShoppingCartItems", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>

@@ -10,7 +10,7 @@ using ClothingBrand.Domain.Models;
 using ClothingBrand.Infrastructure.DataContext;
 using Mapster;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity;
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -25,6 +25,8 @@ using Microsoft.AspNetCore.Http;
 using ClothingBrand.Application.Contract;
 using System.Net;
 using Microsoft.AspNetCore.WebUtilities;
+using ClothingBrand.Application.Common.DTO.Request.Account;
+using Microsoft.AspNetCore.Mvc;
 
 namespace infrastructure.Repos
 {
@@ -68,6 +70,7 @@ namespace infrastructure.Repos
 
                     new Claim(ClaimTypes.Email, user.Email),
                     new Claim(ClaimTypes.Role, (await userManager.GetRolesAsync(user)).FirstOrDefault().ToString()),
+                     new Claim(ClaimTypes.NameIdentifier,user.Id),
                     new Claim("FullName", user.Name)
                 };
 
@@ -217,7 +220,7 @@ namespace infrastructure.Repos
             {
                 var user = await FindUserByEmailAsync(model.Email);
                 if (user == null) return new LoginResponse(false, "invalid Login");
-                SignInResult signInResult;
+                Microsoft.AspNetCore.Identity.SignInResult signInResult;
                 try
                 {
                     signInResult = await signInManager.CheckPasswordSignInAsync(user, model.Password, false);
@@ -226,7 +229,15 @@ namespace infrastructure.Repos
                 {
                     return new LoginResponse(false, "invalid Login");
                 }
-                if (!signInResult.Succeeded) return new LoginResponse(false, "invalid Login");
+
+                if (!signInResult.Succeeded)
+                {
+                    //if (!user.EmailConfirmed)
+                    //{
+                    //    return new LoginResponse(false, "You need To Confirm Email");
+                    //}
+                    return new LoginResponse(false, "invalid Login");
+                }
                 string token = await GenerateToken(user);
                 string refreshToken = GenerateRefreshToken();
                 if (token is null || refreshToken is null) return new LoginResponse(false, "invalid Login");
@@ -281,9 +292,50 @@ namespace infrastructure.Repos
         public async Task SendEmail(string userId)
         {
             var user= await userManager.FindByIdAsync(userId);
-         //   await SendConfirmationEmail(user);
+            await SendConfirmationEmail(user);
         }
 
+        private async Task SendConfirmationEmail(ApplicationUser userModel)
+        {
+
+            var token = await userManager.GenerateEmailConfirmationTokenAsync(userModel);
+            var encodedToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));//WebUtility.UrlEncode(token);
+            var requestAccessor = _contextAccessor.HttpContext.Request;
+            var reqest = requestAccessor.Scheme + "://" + requestAccessor.Host + "/api/Account/ConfirmEmail/?userId=" + userModel.Id + "&token=" + encodedToken;
+            var filePath = "wwwroot/Template/emailConfirm.html";
+            var str = new StreamReader(filePath);
+
+            var mailText = str.ReadToEnd();
+            str.Close();
+
+            mailText = mailText.Replace("Url_aboshaban", reqest);
+
+
+            var sendMessage = await _emailService.SendEmailAsync(userModel.Email, "Please Confirm Your Email", mailText);
+
+
+
+
+
+        }
+
+        public async Task<GeneralResponse> ConfirmEmail(string userID, string Token)
+        {
+            var user = await userManager.FindByIdAsync(userID);
+            var decodedToken = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(Token)); // WebUtility.UrlDecode(Token);
+            var result = await userManager.ConfirmEmailAsync(user, decodedToken);
+            if (result.Succeeded)
+            {
+                return new GeneralResponse(true, "Confirmed Email successful");
+            }
+            string err = "";
+            foreach (var item in result.Errors)
+            {
+                err += item.Description;
+            }
+            return new GeneralResponse { flag = false, message = err };
+
+        }
 
 
         public async Task<GeneralResponse> RemoveUser(string id)
@@ -319,6 +371,81 @@ namespace infrastructure.Repos
             await signInManager.SignOutAsync();
              return new GeneralResponse(true, "User deleted successfully");
         }
+
+
+
+
+        public async Task<GeneralResponse> ResetPassword(string userId,string token,string password)
+        {
+            ApplicationUser userModel = await userManager.FindByIdAsync(userId);
+            if (userModel != null)
+            {
+                var decodedToken = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(token));
+                var result = await userManager.ResetPasswordAsync(userModel, decodedToken, password);
+                if (result.Succeeded)
+                {
+                    return new GeneralResponse(true,"password changes");
+                }
+                return new GeneralResponse(false, "Invalid password");
+            }
+
+
+            return new GeneralResponse(false, "Invalid user ID");
+
+        }
+
+
+
+
+        public async Task ForgetPassword(string userEmail)
+        {
+            var userModel= await FindUserByEmailAsync(userEmail);
+
+            if (userModel != null)
+            {
+
+                var token = await userManager.GeneratePasswordResetTokenAsync(userModel);
+                var encodedToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));//WebUtility.UrlEncode(token);
+                var requestAccessor = _contextAccessor.HttpContext.Request;
+                var reqest = requestAccessor.Scheme + "://" + requestAccessor.Host + "/api/Account/ResetPassword/?userId=" + userModel.Id + "&token=" + encodedToken+ "&password=Shaban@123";
+                var filePath = "wwwroot/Template/emailConfirm.html";
+                var str = new StreamReader(filePath);
+
+                var mailText = str.ReadToEnd();
+                str.Close();
+
+                mailText = mailText.Replace("Url_aboshaban", reqest);
+
+
+                var sendMessage = await _emailService.SendEmailAsync(userModel.Email, "Please Change Your Password", mailText);
+            }
+
+
+
+        }
+
+        public async Task<GeneralResponse> ChangePassword(ChangePasswordDTO changePasswordDTO)
+        {
+            
+                ApplicationUser userModel = await userManager.FindByNameAsync(changePasswordDTO.Email);
+
+                if (userModel != null && await userManager.CheckPasswordAsync(userModel, changePasswordDTO.Password))
+                {
+                    await userManager.ChangePasswordAsync(userModel, changePasswordDTO.Password, changePasswordDTO.NewPassword);
+
+
+                         return new GeneralResponse(true, "Password Change successfully");
+
+                }
+
+            return new GeneralResponse(true, "invaild Password Or User");
+
+        }
+
+           
+        
+
+
 
     }
 }
