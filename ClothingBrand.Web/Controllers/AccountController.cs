@@ -130,16 +130,16 @@ namespace API.Controllers
 
 
 
-        [HttpGet("ResetPassword")]
-        public async Task<IActionResult> ResetPassword(string userId, string token, string password)
+        [HttpPost("identity/ResetPassword")]
+        public async Task<IActionResult> ResetPassword(ResetPassword resetPassword)
         {
             {
-                var result = await _account.ResetPassword(userId, token, password);
+                var result = await _account.ResetPassword(resetPassword.userId, resetPassword.Token, resetPassword.password);
                 if (result.flag)
                 {
-                    return Ok(result.message);
+                    return Ok(result);
                 }
-                return BadRequest(result.message);
+                return BadRequest(result);
             }
 
 
@@ -149,10 +149,10 @@ namespace API.Controllers
 
 
 
-        [HttpPost("ForgetPassword")]
-        public async Task<IActionResult> ForgetPassword([Required] string email)
+        [HttpGet("identity/ForgetPassword")]
+        public async Task<IActionResult> ForgetPassword([Required] string email,string origin)
         {
-            await _account.ForgetPassword(email);
+            await _account.ForgetPassword(email, origin);
             return Ok();
         }
         [HttpPost("ChangePassword")]
@@ -169,6 +169,26 @@ namespace API.Controllers
 
 
 
+        }
+
+        [HttpGet("EmailExists")]
+        public async Task<IActionResult> EmailExists(string email)
+        {
+            var res= _account.emailExists(email);
+            return Ok(res);
+        }
+        [HttpGet("userExists")]
+        public async Task<IActionResult> UserExists(string id)
+        {
+            var res = _account.UserExistsAsync(id);
+            return Ok(res);
+        }
+
+         [HttpGet("CurrentUser")]
+        public async Task<IActionResult> CurrentUserId()
+        {
+            var res = User.FindFirstValue(ClaimTypes.NameIdentifier);   
+            return Ok(res);
         }
 
 

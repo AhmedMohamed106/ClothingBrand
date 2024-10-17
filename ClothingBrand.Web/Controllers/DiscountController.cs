@@ -15,6 +15,7 @@ namespace ClothingBrand.Web.Controllers
                 _discountService = discountService;
             }
             [HttpGet]
+       
             public IActionResult GetAll()
             {
                 var discounts = _discountService.GEtAll();

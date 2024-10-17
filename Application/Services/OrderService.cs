@@ -20,13 +20,13 @@ namespace ClothingBrand.Application.Services
 
         private decimal CalculateShippingCost(ShippingDto shippingDetails)
         {
-            switch (shippingDetails.ShippingMethod.ToLower())
+            switch (shippingDetails.ShippingMethod)
             {
-                case "standard":
+                case "Standard":
                     return 5.00m;
-                case "express":
+                case "Express":
                     return 10.00m;
-                case "international":
+                case "International":
                     return 20.00m;
                 case "NA":
                     return 0.0m;

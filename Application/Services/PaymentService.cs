@@ -29,7 +29,8 @@ namespace ClothingBrand.Application.Services
                 Currency = paymentDto.Currency,
                 PaymentMethod = paymentDto.PaymentMethodId,
                 ConfirmationMethod = "manual",
-                Confirm = true
+                Confirm = true,
+                ReturnUrl= "http://localhost:4200/Confirm-Order"
             };
 
             var service = new PaymentIntentService();

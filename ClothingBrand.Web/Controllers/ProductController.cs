@@ -28,6 +28,7 @@ namespace ClothingBrand.Web.Controllers
           return Ok(products);
         }
         [HttpPost]
+     //  [Authorize(Roles ="user")]
         public async Task<IActionResult> Create([FromForm] ProductDTO productDTO)
         {
             if (productDTO == null) { return BadRequest(); }

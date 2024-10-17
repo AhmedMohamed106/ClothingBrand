@@ -100,7 +100,6 @@ namespace ClothingBrand.Application.Services
                 {
                     Id = item.Id,
                     ProductId = item.ProductId,
-                    ShoppingCartId = item.ShoppingCartId,
                     Quantity = item.Quantity,
                     Product = product,       // Establish relationship via navigation property
                     Price = product.Price    // Set price based on the product
