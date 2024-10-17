@@ -4,6 +4,7 @@ using ClothingBrand.Application.Common.DTO.Response.Shipping;
 using ClothingBrand.Application.Common.DTO.Response.ShoppingCart;
 using ClothingBrand.Application.Common.Interfaces;
 using ClothingBrand.Domain.Models;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,12 +16,20 @@ namespace ClothingBrand.Application.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IOrderService _orderService;
         private readonly IPaymentService _paymentService;
+        private readonly IOrderProcessingService _orderProcessingService;
+        private string imagesPath;
+        private readonly IConfiguration _configuration;
+        private readonly string ApplicationUrl;
 
-        public ShoppingCartService(IUnitOfWork unitOfWork, IOrderService orderService, IPaymentService paymentService)
+        public ShoppingCartService(IUnitOfWork unitOfWork, IOrderService orderService, IPaymentService paymentService, IOrderProcessingService orderProcessingService , IConfiguration configuration)
         {
             _unitOfWork = unitOfWork;
             _orderService = orderService;
             _paymentService = paymentService;
+            _orderProcessingService = orderProcessingService;
+            imagesPath = "/images/";
+            _configuration = configuration;
+            ApplicationUrl = _configuration["ApplicationUrl"];
         }
 
         public ShoppingCartDto GetShoppingCart(string userId)
@@ -45,7 +54,7 @@ namespace ClothingBrand.Application.Services
                     Quantity = item.Quantity,
                     ProductName = item.Product != null ? item.Product.Name : "Unknown", // Safe null check
                     Price = item.Price,
-                    imageUrl = item.Product?.ImageUrl,
+                    imageUrl = ApplicationUrl + imagesPath + item.Product?.ImageUrl,
                     ShoppingCartId = item.ShoppingCartId
                     
                 }).ToList()
@@ -100,7 +109,6 @@ namespace ClothingBrand.Application.Services
                 {
                     Id = item.Id,
                     ProductId = item.ProductId,
-                    ShoppingCartId = item.ShoppingCartId,
                     Quantity = item.Quantity,
                     Product = product,       // Establish relationship via navigation property
                     Price = product.Price    // Set price based on the product
@@ -177,9 +185,7 @@ namespace ClothingBrand.Application.Services
 
             return shippingCost;
         }
-
-
-        public OrderDto Checkout(string userId, ShippingDto shippingDetails, PaymentDto paymentDto)
+        public OrderDto Checkout(string userId, ShippingDto shippingDetails)
         {
             // Retrieve shopping cart
             var cart = GetShoppingCart(userId);
@@ -193,19 +199,74 @@ namespace ClothingBrand.Application.Services
             {
                 throw new Exception("Shipping details are required.");
             }
+           
+            // Create the order with status "Pending Payment"
+            var newOrder = _orderProcessingService.CreateOrder(userId, cart, shippingDetails);
 
-            // Calculate total price including shipping
-            decimal shippingCost = CalculateShippingCost(shippingDetails); // Assuming you have this method
-            decimal totalPrice = cart.TotalPrice + shippingCost;
+            // Optionally, return the order details to show the user before proceeding with payment
+            return newOrder;
+        }
 
-            paymentDto.Amount = (long)( totalPrice * 100);  // converts dollars to cents
 
-            // Create the order
-            var order = _orderService.CreateOrder(userId, cart, shippingDetails);
+        //public OrderDto Checkout(string userId, ShippingDto shippingDetails, PaymentDto paymentDto)
+        //{
+        //    // Retrieve shopping cart
+        //    var cart = GetShoppingCart(userId);
+        //    if (cart == null || cart.ShoppingCartItems == null || cart.ShoppingCartItems.Count == 0)
+        //    {
+        //        throw new Exception("Shopping cart is empty or not initialized.");
+        //    }
+
+        //    // Check if shipping details are provided
+        //    if (shippingDetails == null)
+        //    {
+        //        throw new Exception("Shipping details are required.");
+        //    }
+
+        //    // Calculate total price including shipping
+        //    decimal shippingCost = CalculateShippingCost(shippingDetails); // Assuming you have this method
+        //    decimal totalPrice = cart.TotalPrice + shippingCost;
+
+        //    paymentDto.Amount = (long)( totalPrice * 100);  // converts dollars to cents
+
+        //    // Create the order
+        //    var order = _orderService.CreateOrder(userId, cart, shippingDetails);
+        //    if (order == null)
+        //    {
+        //        throw new Exception("Failed to create the order.");
+        //    }
+
+        //    // Process payment
+        //    var paymentResult = _paymentService.ProcessPayment(paymentDto).Result;
+        //    if (!paymentResult.IsSuccessful)
+        //    {
+        //        throw new Exception(paymentResult.Message);
+        //    }
+        //    UpdateOrderStatusDto orderstatus = new UpdateOrderStatusDto();
+
+        //    orderstatus.OrderStatus = "Confirmed";
+
+        //    // Update payment status on order
+        //    _orderService.UpdatePaymentStatus(order.OrderId, "Paid");
+        //    _orderService.UpdateOrderStatus(order.OrderId, orderstatus);
+        //    _unitOfWork.Save();
+        //    // Clear shopping cart after successful checkout
+        //    ClearCart(userId);
+
+        //    return order;
+        //}
+
+        public PaymentResultDto ProceedToPayment(string userId , int orderId, PaymentDto paymentDto)
+        {
+            // Retrieve the existing order
+            var order = _orderService.GetOrderById(orderId);
             if (order == null)
             {
-                throw new Exception("Failed to create the order.");
+                throw new Exception("Order not found.");
             }
+
+            // Calculate total price to charge
+            paymentDto.Amount = (long)(order.TotalPrice * 100);  // Convert to cents if using a payment gateway like Stripe
 
             // Process payment
             var paymentResult = _paymentService.ProcessPayment(paymentDto).Result;
@@ -213,19 +274,21 @@ namespace ClothingBrand.Application.Services
             {
                 throw new Exception(paymentResult.Message);
             }
-            UpdateOrderStatusDto orderstatus = new UpdateOrderStatusDto();
 
-            orderstatus.OrderStatus = "Confirmed";
-            
-            // Update payment status on order
-            _orderService.UpdatePaymentStatus(order.OrderId, "Paid");
-            _orderService.UpdateOrderStatus(order.OrderId, orderstatus);
+            // Update payment and order status
+            _orderProcessingService.UpdatePaymentStatus(order.OrderId, "Paid");
+            _orderProcessingService.UpdateOrderStatus(order.OrderId, "Confirmed");
+            _unitOfWork.Save();
 
-            // Clear shopping cart after successful checkout
             ClearCart(userId);
-
-            return order;
+            // Return payment result or order confirmation
+            return new PaymentResultDto
+            {
+                IsSuccessful = true,
+                Message = "Payment successful. Order confirmed."
+            };
         }
+
 
 
 

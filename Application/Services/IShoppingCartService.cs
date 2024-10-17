@@ -14,7 +14,9 @@ namespace ClothingBrand.Application.Services
     {
         ShoppingCartDto GetShoppingCart(string userId);
         void AddToCart(string userId, ShoppingCartItemDto item);
-        OrderDto Checkout(string userId, ShippingDto shippingDetails, PaymentDto paymentDto);
+        //OrderDto Checkout(string userId, ShippingDto shippingDetails, PaymentDto paymentDto);
+        OrderDto Checkout(string userId, ShippingDto shippingDetails);
+        PaymentResultDto ProceedToPayment(string userId , int orderId, PaymentDto paymentDto);
         void ClearCart(string userId);
         void RemoveFromCart(string userId, int productId);
     }

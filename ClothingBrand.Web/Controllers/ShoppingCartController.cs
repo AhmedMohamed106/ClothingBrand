@@ -19,14 +19,15 @@ namespace ClothingBrand.WebApi.Controllers
     public class ShoppingCartController : ControllerBase
     {
         private readonly IShoppingCartService _shoppingCartService;
+        private readonly IOrderProcessingService _orderProcessingService;
         private readonly ILogger<ShoppingCartController> _logger;
 
 
-        public ShoppingCartController(IShoppingCartService shoppingCartService , ILogger<ShoppingCartController> logger)
+        public ShoppingCartController(IShoppingCartService shoppingCartService , ILogger<ShoppingCartController> logger, IOrderProcessingService orderProcessingService)
         {
             _shoppingCartService = shoppingCartService;
             _logger = logger;
-
+            _orderProcessingService = orderProcessingService;
         }
 
         // GET: api/shoppingcart/{userId}
@@ -59,7 +60,7 @@ namespace ClothingBrand.WebApi.Controllers
             {
                 ProductId = request.ProductId,
                 Quantity = request.Quantity
-                ,ShoppingCartId = request.ShoppingCartId
+                
            
               
             };
@@ -112,11 +113,6 @@ namespace ClothingBrand.WebApi.Controllers
             {
                 return BadRequest("Shipping details are required.");
             }
-
-            if (checkoutRequest.PaymentDto == null)
-            {
-                return BadRequest("Payment details are required.");
-            }
             //var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             //if (string.IsNullOrEmpty(userId))
             //{
@@ -134,16 +130,11 @@ namespace ClothingBrand.WebApi.Controllers
                 State = checkoutRequest.ShippingDetails.State
             };
 
-            PaymentDto paymentDetailsDto = new PaymentDto
-            {
-                Amount = checkoutRequest.PaymentDto.Amount,
-               Currency = checkoutRequest.PaymentDto.Currency,
-               PaymentMethodId = checkoutRequest.PaymentDto.PaymentMethodId
-            };
+            
 
             try
             {
-                var order = _shoppingCartService.Checkout(checkoutRequest.userId, checkoutShippingRequestDto, paymentDetailsDto);
+                var order = _shoppingCartService.Checkout(checkoutRequest.userId, checkoutShippingRequestDto);
                 return Ok(order);
             }
             catch (Exception ex)
@@ -155,8 +146,29 @@ namespace ClothingBrand.WebApi.Controllers
             }
         }
 
-    // DELETE: api/shoppingcart/clear/{userId}
-    [HttpDelete("clear/{userId}")]
+        [HttpPost("payment/{userId}/{orderId}")]
+        public IActionResult ProceedToPayment(string userId , int orderId, [FromBody] PaymentDetailsDto paymentDetailsDto)
+        {
+            PaymentDto paymentdto = new PaymentDto
+            {
+                PaymentMethodId = paymentDetailsDto.PaymentMethodId
+            };
+            try
+            {
+                // Proceed with the payment for the created order
+                var paymentResult = _shoppingCartService.ProceedToPayment(userId , orderId, paymentdto);
+
+                // Return the payment result (success or failure)
+                return Ok(paymentResult);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new {ex});
+            }
+        }
+
+        // DELETE: api/shoppingcart/clear/{userId}
+        [HttpDelete("clear/{userId}")]
         public IActionResult ClearCart(string userId)
         {
             try

@@ -78,11 +78,11 @@ namespace ClothingBrand.Infrastructure.DependencyInjection
 
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
-            services.AddScoped<IProductService, ProductService>();
             services.AddScoped<IOrderService, OrderService>();
             services.AddScoped<IShoppingCartService, ShoppingCartService>();
             services.AddScoped<IPaymentService, PaymentService>();
             services.AddScoped<ICustomClothingOrderService, CustomClothingOrderService>();
+            services.AddScoped<IOrderProcessingService, OrderProcessingService>();
             services.AddScoped<IAccount, AccountRepository>();
             services.AddScoped<IProductRepository, ProductRepository>();
             services.AddScoped<ICategoryRepository, CategoryRepository>();
