@@ -2,6 +2,7 @@
 using ClothingBrand.Application.Common.Interfaces;
 using ClothingBrand.Application.Services;
 using ClothingBrand.Domain.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -26,6 +27,7 @@ namespace ClothingBrand.Web.Controllers
             return Ok(courses);
         }
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public IActionResult Create(CreateCourse course)
         {
             if (ModelState.IsValid)
@@ -47,6 +49,7 @@ namespace ClothingBrand.Web.Controllers
 
         [HttpPut]
         [Route("{id:int}")]
+        [Authorize(Roles = "Admin")]
         public IActionResult Update(int id, CreateCourse course)
         {
             if (ModelState.IsValid)
@@ -71,6 +74,7 @@ namespace ClothingBrand.Web.Controllers
 
         [HttpDelete]
         [Route("{id:int}")]
+        [Authorize(Roles = "Admin")]
         public IActionResult Delete(int id)
         {
           

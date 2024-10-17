@@ -1,5 +1,6 @@
 ﻿using ClothingBrand.Application.Common.DTO.Request;
 using ClothingBrand.Application.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -21,6 +22,8 @@ namespace ClothingBrand.Web.Controllers
             return Ok(products);
         }
         [HttpPost]
+        [Authorize(Roles = "Admin")]
+
         public IActionResult Create(CreateCategoryDto categoryDto)
         {
             if (categoryDto == null) { return BadRequest(); }
@@ -30,6 +33,7 @@ namespace ClothingBrand.Web.Controllers
             return Ok();
         }
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")]
         public IActionResult Update(int id, CreateCategoryDto categoryDto)
         {
             if (categoryDto == null) { return BadRequest(); }
@@ -45,6 +49,8 @@ namespace ClothingBrand.Web.Controllers
             return Ok(products);
         }
         [HttpDelete]
+        [Authorize(Roles = "Admin")]
+
         public IActionResult Remove(int id)
         {
             _CategoryService.Remove(id);
