@@ -7,6 +7,6 @@ namespace ClothingBrand.Web.helpers
     {
         public string userId { get; set; }
         public ShippingDto ShippingDetails { get; set; }
-        public PaymentDetailsDto PaymentDto { get; set; }
+        //public PaymentDetailsDto PaymentDto { get; set; }
     }
 }
