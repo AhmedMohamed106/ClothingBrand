@@ -1,6 +1,7 @@
 ﻿using ClothingBrand.Application.Common.DTO.Request.CustomOrderClothes;
 using ClothingBrand.Application.Common.DTO.Response.CustomOrderClothes;
 using ClothingBrand.Application.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
@@ -17,6 +18,7 @@ public class CustomClothingOrderController : ControllerBase
     }
 
     [HttpGet]
+    [Authorize(Roles = "Admin")] // Admins only
     public ActionResult<IEnumerable<CustomClothingOrderDto>> GetAllClothingOrders()
     {
         var orders = _customClothingOrderService.GetAllCustomClothingOrders();
@@ -24,6 +26,7 @@ public class CustomClothingOrderController : ControllerBase
     }
 
     [HttpGet("{id:int}")]
+    [Authorize(Roles = "user,Admin")] // Both Users and Admins
     public ActionResult<CustomClothingOrderDto> GetClothingOrderById(int id)
     {
         var order = _customClothingOrderService.GetCustomClothingOrderById(id);
@@ -36,6 +39,7 @@ public class CustomClothingOrderController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Roles = "user,Admin")] // Both Users and Admins
     public ActionResult<CustomClothingOrderDto> CreateClothingOrder([FromForm] CreateCustomClothingOrderDto orderDto)
     {
         if (!ModelState.IsValid)
@@ -55,6 +59,7 @@ public class CustomClothingOrderController : ControllerBase
     }
 
     [HttpPut("{id:int}")]
+    [Authorize(Roles = "user,Admin")] // Both Users and Admins
     public ActionResult<CustomClothingOrderDto> UpdateClothingOrder(int id, [FromForm] UpdateCustomClothingOrderDto orderDto)
     {
         if (!ModelState.IsValid)
@@ -79,6 +84,7 @@ public class CustomClothingOrderController : ControllerBase
     }
 
     [HttpDelete("{id:int}")]
+    [Authorize(Roles = "user,Admin")] // Both Users and Admins
     public ActionResult DeleteClothingOrder(int id)
     {
         try
@@ -97,6 +103,7 @@ public class CustomClothingOrderController : ControllerBase
     }
 
     [HttpPatch("{id:int}/status")]
+    [Authorize(Roles = "Admin")] // Admins only
     public ActionResult<CustomClothingOrderDto> UpdateClothingOrderStatus(int id, [FromBody] string newStatus)
     {
         if (string.IsNullOrWhiteSpace(newStatus))

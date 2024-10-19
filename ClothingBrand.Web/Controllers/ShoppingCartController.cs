@@ -13,7 +13,7 @@ using System.Security.Claims;
 
 namespace ClothingBrand.WebApi.Controllers
 {
-    //[Authorize]
+    [Authorize] // Global authorization (only authorized users can access the controller)
     [ApiController]
     [Route("api/[controller]")]
     public class ShoppingCartController : ControllerBase
@@ -32,6 +32,7 @@ namespace ClothingBrand.WebApi.Controllers
 
         // GET: api/shoppingcart/{userId}
         [HttpGet("{userId}")]
+        [Authorize(Roles = "user,Admin")] // Allow both User and Admin to view carts
         public IActionResult GetShoppingCart(string userId)
         {
             try
@@ -45,8 +46,8 @@ namespace ClothingBrand.WebApi.Controllers
             }
         }
 
-       //[Authorize]
         [HttpPost("add")]
+        [Authorize(Roles = "user")] // Allow both User and Admin to add to the cart
         public IActionResult AddToCart(string userId , [FromBody] AddToCartRequestDto request)
         {
             //var userId = HttpContext.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -81,6 +82,7 @@ namespace ClothingBrand.WebApi.Controllers
 
         // DELETE: api/shoppingcart/remove
         [HttpDelete("remove/{userId}/{productId}")]
+        [Authorize(Roles = "user")] 
         public IActionResult RemoveFromCart(string userId, int productId)
         {
             try
@@ -93,10 +95,10 @@ namespace ClothingBrand.WebApi.Controllers
                 return BadRequest(ex.Message);
             }
         }
-
+        
         // POST: api/shoppingcart/checkout
-       // [Authorize]
         [HttpPost("checkout")]
+        [Authorize(Roles = "user")]
         public IActionResult Checkout([FromBody] CheckoutRequestDto checkoutRequest)
         {
             if (checkoutRequest == null)
@@ -147,6 +149,7 @@ namespace ClothingBrand.WebApi.Controllers
         }
 
         [HttpPost("payment/{userId}/{orderId}")]
+        [Authorize(Roles = "user")]
         public IActionResult ProceedToPayment(string userId , int orderId, [FromBody] PaymentDetailsDto paymentDetailsDto)
         {
             PaymentDto paymentdto = new PaymentDto
@@ -169,6 +172,7 @@ namespace ClothingBrand.WebApi.Controllers
 
         // DELETE: api/shoppingcart/clear/{userId}
         [HttpDelete("clear/{userId}")]
+        [Authorize(Roles = "user")]
         public IActionResult ClearCart(string userId)
         {
             try

@@ -20,8 +20,8 @@ namespace ClothingBrand.Api.Controllers
         }
 
         //// POST: api/order/create
+        [Authorize(Roles = "user,Admin")]  // Authorize Users and Admins to create orders
         [HttpPost("create")]
-        [Authorize]
         public ActionResult<OrderDto> CreateOrder([FromBody] CreateOrderRequest request)
         {
             // Customize the request as needed based on your requirements
@@ -31,7 +31,7 @@ namespace ClothingBrand.Api.Controllers
 
         // GET: api/order
         [HttpGet]
-       // [Authorize]
+       [Authorize(Roles ="Admin")]
         public ActionResult<IEnumerable<OrderSummaryDto>> GetOrders()
         {
             var orders = _orderService.GetOrders();
@@ -72,7 +72,7 @@ namespace ClothingBrand.Api.Controllers
         }
 
         [HttpGet("{orderId}")]
-       // [Authorize]
+       [Authorize(Roles = "user,Admin")]
         public ActionResult<OrderSummaryDto> GetOrderById(int orderId)
         {
             var order = _orderService.GetOrderById(orderId);
@@ -114,7 +114,7 @@ namespace ClothingBrand.Api.Controllers
 
         // PUT: api/order/{id}/status
         [HttpPut("{orderId}/status")]
-       // [Authorize]
+        [Authorize(Roles = "Admin")]  // Only Admin can update order status
         public ActionResult UpdateOrderStatus(int orderId, [FromBody] UpdateOrderStatusDto dto)
         {
             _orderService.UpdateOrderStatus(orderId, dto);
@@ -123,7 +123,7 @@ namespace ClothingBrand.Api.Controllers
 
         // PUT: api/order/{id}/payment-status
         [HttpPut("{orderId}/payment-status")]
-      //  [Authorize]
+        [Authorize(Roles = "Admin")]  // Only Admin can update order status
         public ActionResult UpdatePaymentStatus(int orderId, [FromBody] string paymentStatus)
         {
             _orderService.UpdatePaymentStatus(orderId, paymentStatus);
@@ -131,7 +131,7 @@ namespace ClothingBrand.Api.Controllers
         }
 
         [HttpGet("user/{userId}")]
-       // [Authorize]
+        [Authorize(Roles = "user,Admin")]  // Users and Admins can view user-specific orders
         public ActionResult<IEnumerable<OrderSummaryDto>> GetUserOrders(string userId)
         {
             var orders = _orderService.GetUserOrders(userId);
@@ -174,7 +174,7 @@ namespace ClothingBrand.Api.Controllers
 
         // DELETE: api/order/{id}/cancel
         [HttpDelete("{orderId}/cancel")]
-        [Authorize]
+        [Authorize(Roles = "user,Admin")]  // Users and Admins can cancel an order
         public ActionResult CancelOrder(int orderId)
         {
             var result = _orderService.CancelOrder(orderId);

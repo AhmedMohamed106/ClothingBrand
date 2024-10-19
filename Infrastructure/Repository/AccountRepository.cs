@@ -231,11 +231,11 @@ namespace infrastructure.Repos
                 }
 
                 if (!signInResult.Succeeded)
-                {
-                    //if (!user.EmailConfirmed)
-                    //{
-                    //    return new LoginResponse(false, "You need To Confirm Email");
-                    //}
+                {                    if (!user.EmailConfirmed)
+                    {
+                        return new LoginResponse(false, "You need To Confirm Email");
+                    }
+
                     return new LoginResponse(false, "invalid Login");
                 }
                 string token = await GenerateToken(user);

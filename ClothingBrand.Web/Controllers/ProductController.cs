@@ -28,7 +28,7 @@ namespace ClothingBrand.Web.Controllers
           return Ok(products);
         }
         [HttpPost]
-     //  [Authorize(Roles ="user")]
+       // [Authorize(Roles = "Admin")] // Only Admins can create products
         public async Task<IActionResult> Create([FromForm] ProductDTO productDTO)
         {
             if (productDTO == null) { return BadRequest(); }
@@ -38,7 +38,8 @@ namespace ClothingBrand.Web.Controllers
             return Ok();
         }
         [HttpPut("{id}")]
-        public IActionResult Update(int id,ProductDTO productDTO)
+       // [Authorize(Roles = "Admin")] // Only Admins can update products
+        public IActionResult Update(int id,[FromForm]ProductDTO productDTO)
         {
             if (productDTO == null) { return BadRequest(); }
 
@@ -55,6 +56,7 @@ namespace ClothingBrand.Web.Controllers
         }
 
         [HttpDelete]
+        [Authorize(Roles = "Admin")] // Only Admins can delete products
         public IActionResult Remove(int id)
         {
             _productService.Remove(id);

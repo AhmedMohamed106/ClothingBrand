@@ -155,7 +155,7 @@ namespace API.Controllers
             await _account.ForgetPassword(email, origin);
             return Ok();
         }
-        [HttpPost("ChangePassword")]
+        [HttpPost("identity/ChangePassword")]
         public async Task<IActionResult> ChangePassword(ChangePasswordDTO changePasswordDTO)
         {
 
@@ -163,7 +163,7 @@ namespace API.Controllers
             {
                 var res = await _account.ChangePassword(changePasswordDTO);
 
-                return Ok(res.message);
+                return Ok(res);
             }
             return BadRequest(ModelState);
 

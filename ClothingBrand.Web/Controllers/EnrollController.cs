@@ -2,6 +2,7 @@
 using ClothingBrand.Application.Common.DTO.EnrollmentDto;
 using ClothingBrand.Application.Common.Interfaces;
 using ClothingBrand.Application.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,6 +19,7 @@ namespace ClothingBrand.Web.Controllers
         }
 
         [HttpGet]
+        [Authorize] // Require authentication
         public IActionResult GetAll()
         {
             var courses = _enrollService.GetAll();
@@ -26,6 +28,7 @@ namespace ClothingBrand.Web.Controllers
             return Ok(courses);
         }
         [HttpPost]
+        [Authorize] // Require authentication
         public IActionResult Create(CreateEnrollmentDto Enrollcourse)
         {
             if (ModelState.IsValid)
@@ -48,6 +51,7 @@ namespace ClothingBrand.Web.Controllers
      
 
         [HttpDelete]
+        [Authorize(Roles = "Admin,user")] // Require authentication and specific roles
         [Route("{CourseID:int}/userId/{userID}")]
         public IActionResult Delete(int CourseID,string userID)
         {
@@ -81,6 +85,7 @@ namespace ClothingBrand.Web.Controllers
 
 
         [HttpGet("{courseid}")]
+        [Authorize(Roles = "Admin")] // Require Admin role
         public IActionResult GetUsersForCourse(int courseid)
         {
            var userDtos = _enrollService.GetUserEnrollInCourse(courseid);
@@ -89,6 +94,7 @@ namespace ClothingBrand.Web.Controllers
 
 
         [HttpGet("GetCoursesForUser/{userid}")]
+        [Authorize(Roles = "Admin , user")] // Require Admin role
         public IActionResult GetCoursesForUser(string userid)
         {
             var CoursesDtos = _enrollService.GetCoursesForUser(userid);
