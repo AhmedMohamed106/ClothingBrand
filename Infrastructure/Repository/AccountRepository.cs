@@ -150,7 +150,7 @@ namespace infrastructure.Repos
                     return new GeneralResponse(false, error);
 
                 }
-              //  await SendConfirmationEmail(user);
+                await SendConfirmationEmail(user);
                 
               return  await AssignUserToRoleAsync(user,new IdentityRole() { Name=model.Role });
 
@@ -231,11 +231,11 @@ namespace infrastructure.Repos
                 }
 
                 if (!signInResult.Succeeded)
-                {
-                    //if (!user.EmailConfirmed)
-                    //{
-                    //    return new LoginResponse(false, "You need To Confirm Email");
-                    //}
+                {                    if (!user.EmailConfirmed)
+                    {
+                        return new LoginResponse(false, "You need To Confirm Email");
+                    }
+
                     return new LoginResponse(false, "invalid Login");
                 }
                 string token = await GenerateToken(user);
@@ -301,7 +301,8 @@ namespace infrastructure.Repos
             var token = await userManager.GenerateEmailConfirmationTokenAsync(userModel);
             var encodedToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));//WebUtility.UrlEncode(token);
             var requestAccessor = _contextAccessor.HttpContext.Request;
-            var reqest = requestAccessor.Scheme + "://" + requestAccessor.Host + "/api/Account/ConfirmEmail/?userId=" + userModel.Id + "&token=" + encodedToken;
+            //api/Account/ConfirmEmail
+            var reqest = requestAccessor.Scheme + "://" + requestAccessor.Host + "/Template/confirmed.html?userId=" + userModel.Id + "&token=" + encodedToken;
             var filePath = "wwwroot/Template/emailConfirm.html";
             var str = new StreamReader(filePath);
 
@@ -397,7 +398,7 @@ namespace infrastructure.Repos
 
 
 
-        public async Task ForgetPassword(string userEmail)
+        public async Task ForgetPassword(string userEmail, string origion)
         {
             var userModel= await FindUserByEmailAsync(userEmail);
 
@@ -406,8 +407,9 @@ namespace infrastructure.Repos
 
                 var token = await userManager.GeneratePasswordResetTokenAsync(userModel);
                 var encodedToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));//WebUtility.UrlEncode(token);
-                var requestAccessor = _contextAccessor.HttpContext.Request;
-                var reqest = requestAccessor.Scheme + "://" + requestAccessor.Host + "/api/Account/ResetPassword/?userId=" + userModel.Id + "&token=" + encodedToken+ "&password=Shaban@123";
+               // var requestAccessor = _contextAccessor.HttpContext.Request;
+              // requestAccessor.Scheme + "://" + requestAccessor.Host 
+                var reqest = origion + "/ResetPassword?userId=" + userModel.Id + "&token=" + encodedToken;
                 var filePath = "wwwroot/Template/emailConfirm.html";
                 var str = new StreamReader(filePath);
 
@@ -442,10 +444,29 @@ namespace infrastructure.Repos
 
         }
 
-           
-        
+        public async Task<GeneralResponse> emailExists(string email)
+        {
+          var user=  await FindUserByEmailAsync(email);
+            if(user != null)
+            {
+                return new GeneralResponse(true, "Email Found");
 
+            }
+            else
+            {
+                return new GeneralResponse(false, "Email Not Found");
+            }
+        }
 
+        public async Task<bool> UserExistsAsync(string userId)
+        {
+            var user = await userManager.FindByIdAsync(userId);
+            if (user != null)
+            {
+                return true;
+            }
+            return false;
 
+        }
     }
 }

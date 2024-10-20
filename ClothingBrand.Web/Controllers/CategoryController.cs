@@ -22,7 +22,7 @@ namespace ClothingBrand.Web.Controllers
             return Ok(products);
         }
         [HttpPost]
-        [Authorize(Roles = "Admin")]
+      //  [Authorize(Roles = "Admin")]
 
         public IActionResult Create(CreateCategoryDto categoryDto)
         {
@@ -33,7 +33,7 @@ namespace ClothingBrand.Web.Controllers
             return Ok();
         }
         [HttpPut("{id}")]
-        [Authorize(Roles = "Admin")]
+      //  [Authorize(Roles = "Admin")]
         public IActionResult Update(int id, CreateCategoryDto categoryDto)
         {
             if (categoryDto == null) { return BadRequest(); }

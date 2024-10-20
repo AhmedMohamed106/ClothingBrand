@@ -28,9 +28,10 @@ namespace Application.interfaces
         Task<GeneralResponse> LogOut(string userId);
         Task SendEmail(string userId);
         Task<GeneralResponse> ResetPassword(string userId, string token, string password);
-         Task ForgetPassword(string userEmail);
+         Task ForgetPassword(string userEmail,string origion);
         Task<GeneralResponse> ChangePassword(ChangePasswordDTO changePasswordDTO);
-
+        Task<GeneralResponse> emailExists(string email);
+        Task<bool> UserExistsAsync(string userId);
 
     }
 }

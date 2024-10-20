@@ -21,6 +21,9 @@ public class CustomClothingOrderDto
         public double ArmLength { get; set; }
         public double BicepSize { get; set; }
         public double ModelLength { get; set; }
+        public string customerName { get; set; }
+        public string phoneNumber { get; set; }
+        public DateTime customOrderDate => DateTime.UtcNow;
         public string ImageUrl { get; set; }
         public string UserId { get; set; }
     }

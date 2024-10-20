@@ -108,8 +108,13 @@ namespace ClothingBrand.Application.Services
         }
         public async Task update(int id,ProductDTO productDTO)
         {
+
+
+
+
             var product = new Product()
             {
+
                 CategoryId = productDTO.CategoryId,
                 Name = productDTO.Name,
                 Description = productDTO.Description,
@@ -124,7 +129,7 @@ namespace ClothingBrand.Application.Services
             
             _unitRepository.productRepository.Update(product);
             _unitRepository.Save();
-            File.Delete(GEtProduct(id).ImageUrl);
+            
 
         }
 
