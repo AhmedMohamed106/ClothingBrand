@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,6 +20,8 @@ namespace ClothingBrand.Application.Common.DTO.Request.CustomOrderClothes
         public double? WaistLength { get; set; }
         public double? ArmLength { get; set; }
         public double? BicepSize { get; set; }
+        public string? customerName { get; set; }
+        public string? phoneNumber { get; set; }
         public double? ModelLength { get; set; }
         public IFormFile Image { get; set; }
     }
