@@ -170,13 +170,6 @@ namespace API.Controllers
 
 
         }
-        [HttpGet("CurrentUser")]
-        public async Task<IActionResult> CurrentUserId()
-        {
-            var res = User.FindFirstValue("FullName");
-            if (res == null) return Ok(false);
-            return Ok(res);
-        }
 
 
     }
