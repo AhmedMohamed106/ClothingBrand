@@ -44,7 +44,13 @@ public class CustomClothingOrderController : ControllerBase
     {
         if (!ModelState.IsValid)
         {
+            foreach (var modelError in ModelState.Values.SelectMany(v => v.Errors))
+            {
+                Console.WriteLine(modelError.ErrorMessage);
+            }
             return BadRequest(ModelState);
+
+         
         }
 
         try
@@ -123,6 +129,22 @@ public class CustomClothingOrderController : ControllerBase
         catch (Exception)
         {
             return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while updating the order status.");
+        }
+    }
+
+    [Authorize(Roles = "user")]//dmins only
+
+    [HttpGet("user-orders/{userId}")]
+    public IActionResult GetUserOrders(string userId)
+    {
+        try
+        {
+            var orders = _customClothingOrderService.GetUserOrders(userId);
+            return Ok(orders);
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(ex.Message);
         }
     }
 }
