@@ -19,7 +19,7 @@ namespace ClothingBrand.Web.Controllers
         }
 
         [HttpGet]
-        [Authorize] // Require authentication
+        [Authorize(Roles = "user , Admin")] // Require authentication
         public IActionResult GetAll()
         {
             var courses = _enrollService.GetAll();
@@ -28,7 +28,7 @@ namespace ClothingBrand.Web.Controllers
             return Ok(courses);
         }
         [HttpPost]
-        [Authorize] // Require authentication
+        [Authorize(Roles = "user,Admin")] // Require authentication
         public IActionResult Create(CreateEnrollmentDto Enrollcourse)
         {
             if (ModelState.IsValid)
@@ -70,6 +70,8 @@ namespace ClothingBrand.Web.Controllers
 
         }
 
+
+        [Authorize(Roles = "user , Admin")] // Require authentication
         [HttpGet("{CourseID:int}/userId/{userID}")]
         public IActionResult Get(int CourseID, string userID)
         {
