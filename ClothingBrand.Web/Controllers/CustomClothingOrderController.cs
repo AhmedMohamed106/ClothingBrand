@@ -125,4 +125,18 @@ public class CustomClothingOrderController : ControllerBase
             return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while updating the order status.");
         }
     }
+    [Authorize(Roles = "user")]
+    [HttpGet("user-orders/{userId}")]
+    public IActionResult GetUserOrders(string userId)
+    {
+        try
+        {
+            var orders = _customClothingOrderService.GetUserOrders(userId);
+            return Ok(orders);
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(ex.Message);
+        }
+    }
 }

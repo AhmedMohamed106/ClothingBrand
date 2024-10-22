@@ -93,6 +93,19 @@ public class CustomClothingOrderService : ICustomClothingOrderService
         _unitOfWork.Save();
         return existingOrder.MapToDto(_appConfiguration.ApplicationUrl);
     }
+
+    public IEnumerable<CustomClothingOrderDto> GetUserOrders(string userId)
+    {
+        // Get all orders that belong to the specified user
+        var userOrders = _unitOfWork.customClothingOrderRepository.GetAll(order => order.UserId == userId);
+        if (!userOrders.Any())
+        {
+            throw new KeyNotFoundException($"No custom clothing orders found for user with ID {userId}.");
+        }
+
+        // Map the orders to DTOs and return them
+        return userOrders.Select(order => order.MapToDto(_appConfiguration.ApplicationUrl)).ToList();
+    }
 }
 
 

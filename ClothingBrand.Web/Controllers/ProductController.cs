@@ -47,7 +47,7 @@ namespace ClothingBrand.Web.Controllers
 
             return Ok();
         }
-        [Authorize]
+        
         [HttpGet("{id}")]
         public IActionResult Get(int id)
         {
