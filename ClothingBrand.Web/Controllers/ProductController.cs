@@ -23,6 +23,7 @@ namespace ClothingBrand.Web.Controllers
             _mailingService = mailingService;
         }
         [HttpGet]
+        [Authorize]
         public IActionResult GetAll() {
             var products = _productService.GetAll();
           return Ok(products);
