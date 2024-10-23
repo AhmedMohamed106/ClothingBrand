@@ -1,8 +1,10 @@
 ﻿using Application.DTOs.Request.Account;
+using Application.DTOs.Response;
 using Application.interfaces;
 using ClothingBrand.Application.Common.DTO.Request.Account;
 using ClothingBrand.Domain.Models;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
@@ -34,17 +36,22 @@ namespace API.Controllers
             var response = await _account.LoginAccountAsync(signAcc);
             if (!response.flag) return BadRequest(response.message);
 
+            SetRefreshTokenInCookie(response.RefreshToken);
+             
             return Ok(response);
 
         }
         [HttpPost("identity/refresh-token")]
-        public async Task<IActionResult> RefreshToken(RefreshTockenDto refreshTockenDto)
+        public async Task<IActionResult> RefreshToken()//RefreshTockenDto refreshTockenDto
         {
+            var refreshToken = Request.Cookies["refreshToken"];
             if (!ModelState.IsValid) return BadRequest(ModelState);
-            var response = await _account.RefreshTokenAsync(refreshTockenDto);
-            if (!response.flag) return BadRequest(response.message);
+            var response = await _account.RefreshTokenAsync(refreshToken);
+            if (!response.flag) return BadRequest(response);
+            //if()
+            SetRefreshTokenInCookie(response.RefreshToken);
 
-            return Ok(response.message);
+            return Ok(response);
 
         }
 
@@ -114,7 +121,7 @@ namespace API.Controllers
             return BadRequest(res.message);
         }
 
-        [HttpGet("LogOut")]
+        [HttpGet("identity/LogOut")]
         public async Task<IActionResult> Logout()
         {
             var id = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -184,11 +191,39 @@ namespace API.Controllers
             return Ok(res);
         }
 
-         [HttpGet("CurrentUser")]
-        public async Task<IActionResult> CurrentUserId()
+         [HttpGet("identity/CurrentUserName")]
+        public async Task<IActionResult> CurrentUserName()
         {
-            var res = User.FindFirstValue(ClaimTypes.NameIdentifier);   
-            return Ok(res);
+            var res = User.FindFirstValue("FullName");   
+            if(res == null)return Ok(new GeneralResponse(false,"no Login" ));
+            return Ok(new GeneralResponse(true,res));
+        }
+
+        [HttpGet("identity/CurrentUserRole")]
+        public async Task<IActionResult> CurrentUserRole(string userId)
+        {
+            var res=  await _account.GetRoleOfUser(userId);
+            if (res == null) return Ok( "no  accesss");
+            var result=new GeneralResponse();
+            if (res== "Admin")  result = new GeneralResponse(true, res);
+            else
+              result=new GeneralResponse(false,res);
+            return Ok(result);
+        }
+
+
+        private void SetRefreshTokenInCookie(string refreshToken)
+        {
+            var cookieOptions = new CookieOptions
+            {
+                HttpOnly = true,
+                Expires = DateTime.Now.AddDays(7),//.ToLocalTime()
+                Secure = true,
+                IsEssential = true,
+                SameSite = SameSiteMode.None
+            };
+
+            Response.Cookies.Append("refreshToken", refreshToken, cookieOptions);
         }
 
 
@@ -196,3 +231,8 @@ namespace API.Controllers
 
 
 }
+
+
+//ahmedshapan183@gmail.com
+//Shaban@123
+//    Ahmed@123

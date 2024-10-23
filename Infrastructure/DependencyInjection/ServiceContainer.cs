@@ -41,7 +41,7 @@ namespace ClothingBrand.Infrastructure.DependencyInjection
           //  services.AddIdentityCore<ApplicationUser>(opt=>opt.SignIn.RequireConfirmedEmail=true).AddRoles<IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>().AddSignInManager();
           services.AddIdentity<ApplicationUser,IdentityRole>(options =>
           {
-              options.SignIn.RequireConfirmedEmail = true;
+              options.SignIn.RequireConfirmedEmail = false;
           }).AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
          services.Configure<DataProtectionTokenProviderOptions>(options =>
             {
@@ -76,7 +76,7 @@ namespace ClothingBrand.Infrastructure.DependencyInjection
             services.AddAuthorization();
             services.AddCors(options =>
             {
-                options.AddPolicy("Clean", bul => bul.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
+                options.AddPolicy("Clean", bul => bul.WithOrigins("http://localhost:4200").AllowAnyHeader().AllowAnyMethod().AllowCredentials());
             });
 
 

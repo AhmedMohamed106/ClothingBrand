@@ -4,6 +4,7 @@ using ClothingBrand.Application.Common.DTO.Response.Shipping;
 using ClothingBrand.Application.Common.DTO.Response.ShoppingCart;
 using ClothingBrand.Application.Common.Interfaces;
 using ClothingBrand.Domain.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
@@ -20,8 +21,9 @@ namespace ClothingBrand.Application.Services
         private string imagesPath;
         private readonly IConfiguration _configuration;
         private readonly string ApplicationUrl;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public ShoppingCartService(IUnitOfWork unitOfWork, IOrderService orderService, IPaymentService paymentService, IOrderProcessingService orderProcessingService , IConfiguration configuration)
+        public ShoppingCartService(IUnitOfWork unitOfWork, IOrderService orderService, IPaymentService paymentService, IOrderProcessingService orderProcessingService, IConfiguration configuration, UserManager<ApplicationUser> userManager)
         {
             _unitOfWork = unitOfWork;
             _orderService = orderService;
@@ -30,6 +32,7 @@ namespace ClothingBrand.Application.Services
             imagesPath = "/images/";
             _configuration = configuration;
             ApplicationUrl = _configuration["ApplicationUrl"];
+            _userManager = userManager;
         }
 
         public ShoppingCartDto GetShoppingCart(string userId)
@@ -65,6 +68,7 @@ namespace ClothingBrand.Application.Services
         public void AddToCart(string userId, ShoppingCartItemDto item)
         {
             var user = _unitOfWork.applicationUserRepository.Get(u => u.Id == userId , tracked: true);
+            var user2=_userManager.FindByIdAsync(user.Id);
             if (user == null)
             {
                 throw new Exception("User not found.");
