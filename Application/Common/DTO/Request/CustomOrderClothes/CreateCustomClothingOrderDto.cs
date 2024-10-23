@@ -25,6 +25,12 @@ namespace ClothingBrand.Application.Common.DTO.Request.CustomOrderClothes
         public double ShoulderWidth { get; set; }
 
         [Required]
+
+        public string customerName { get; set; }
+        [Required]
+        public string phoneNumber { get; set; }
+
+        [Required]
         public double ChestCircumference { get; set; }
 
         [Required]

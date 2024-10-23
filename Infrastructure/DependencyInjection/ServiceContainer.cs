@@ -41,7 +41,7 @@ namespace ClothingBrand.Infrastructure.DependencyInjection
           //  services.AddIdentityCore<ApplicationUser>(opt=>opt.SignIn.RequireConfirmedEmail=true).AddRoles<IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>().AddSignInManager();
           services.AddIdentity<ApplicationUser,IdentityRole>(options =>
           {
-              options.SignIn.RequireConfirmedEmail = false;
+              options.SignIn.RequireConfirmedEmail = true;
           }).AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
          services.Configure<DataProtectionTokenProviderOptions>(options =>
             {

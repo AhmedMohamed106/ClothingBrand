@@ -74,13 +74,16 @@ namespace ClothingBrand.Application.Services
 
                 };
                 _unitRepository.discountRepository.Add(catg);
+            _unitRepository.Save();
             }
             public void Remove(int id)
             {
                 _unitRepository.discountRepository.Remove(_unitRepository.discountRepository.Get((x) => x.Id == id));
+            _unitRepository.Save();
 
-            }
-            public void update(int id, CreateDiscountDTO discountDto)
+
+        }
+        public void update(int id, CreateDiscountDTO discountDto)
             {
                 var discount = new Discount()
                 {
@@ -95,7 +98,9 @@ namespace ClothingBrand.Application.Services
 
                 };
                 _unitRepository.discountRepository.Update(discount);
-            }
+            _unitRepository.Save();
+
         }
+    }
     
 }

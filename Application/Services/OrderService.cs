@@ -189,7 +189,7 @@ namespace ClothingBrand.Application.Services
 
         public void UpdateOrderStatus(int orderId, UpdateOrderStatusDto dto)
         {
-            var order = _unitOfWork.orderRepository.Get(o => o.OrderId == orderId,tracked:true);
+            var order = _unitOfWork.orderRepository.Get(o => o.OrderId == orderId, tracked: true);
 
             if (order == null)
             {

@@ -38,7 +38,7 @@ namespace ClothingBrand.Application.Services
 
         public courseDto GetCourse(int id)
         {
-            var course = _unitRepository.sewingCourseRepository.Get((x) => x.Id == id);
+            var course = _unitRepository.sewingCourseRepository.Get((x) => x.Id == id,tracked:true);
 
             var courses = new courseDto
             {

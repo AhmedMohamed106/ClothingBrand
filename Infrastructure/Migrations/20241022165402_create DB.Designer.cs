@@ -12,11 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ClothingBrand.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-
-    [Migration("20241015112803_init")]
-    partial class init
-
-
+    [Migration("20241022165402_create DB")]
+    partial class createDB
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -151,6 +148,10 @@ namespace ClothingBrand.Infrastructure.Migrations
                     b.Property<double>("HipCircumference")
                         .HasColumnType("float");
 
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<double>("ModelLength")
                         .HasColumnType("float");
 
@@ -166,6 +167,14 @@ namespace ClothingBrand.Infrastructure.Migrations
 
                     b.Property<double>("WaistLength")
                         .HasColumnType("float");
+
+                    b.Property<string>("customerName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("phoneNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 

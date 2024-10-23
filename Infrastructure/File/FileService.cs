@@ -43,10 +43,12 @@ namespace ClothingBrand.Infrastructure.File
             {
                 var filePath = Path.Combine(_webHostEnvironment.WebRootPath, folder , imageUrl.TrimStart('/'));
                 try
-                {
-                    if (System.IO.File.Exists(filePath))
+                {   if (imageUrl != null)
                     {
-                        System.IO.File.Delete(filePath);
+                        if (System.IO.File.Exists(filePath))
+                        {
+                            System.IO.File.Delete(filePath);
+                        }
                     }
                 }
                 catch(Exception ex)

@@ -16,6 +16,7 @@ namespace ClothingBrand.Web.Controllers
                 _discountService = discountService;
             }
             [HttpGet]
+       
             public IActionResult GetAll()
             {
                 var discounts = _discountService.GEtAll();
@@ -23,7 +24,7 @@ namespace ClothingBrand.Web.Controllers
             }
 
             [HttpPost]
-            [Authorize(Roles = "Admin")]
+           // [Authorize(Roles = "Admin")]
         public IActionResult Create(CreateDiscountDTO discountDTO)
             {
                 if (discountDTO == null) { return BadRequest(); }
@@ -34,7 +35,7 @@ namespace ClothingBrand.Web.Controllers
             }
 
             [HttpPut("{id}")]
-            [Authorize(Roles = "Admin")]
+         //   [Authorize(Roles = "Admin")]
 
         public IActionResult Update(int id, CreateDiscountDTO discountDTO)
             {
@@ -51,7 +52,7 @@ namespace ClothingBrand.Web.Controllers
                 return Ok(discount);
             }
         [HttpDelete]
-        [Authorize(Roles = "Admin")]
+      //  [Authorize(Roles = "Admin")]
         public IActionResult Remove(int id)
         {
             _discountService.Remove(id);

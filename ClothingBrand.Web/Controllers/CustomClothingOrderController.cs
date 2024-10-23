@@ -44,7 +44,13 @@ public class CustomClothingOrderController : ControllerBase
     {
         if (!ModelState.IsValid)
         {
+            foreach (var modelError in ModelState.Values.SelectMany(v => v.Errors))
+            {
+                Console.WriteLine(modelError.ErrorMessage);
+            }
             return BadRequest(ModelState);
+
+         
         }
 
         try
@@ -125,7 +131,9 @@ public class CustomClothingOrderController : ControllerBase
             return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while updating the order status.");
         }
     }
-    [Authorize(Roles = "user")]
+
+    [Authorize(Roles = "user")]//dmins only
+
     [HttpGet("user-orders/{userId}")]
     public IActionResult GetUserOrders(string userId)
     {

@@ -17,6 +17,8 @@ namespace ClothingBrand.Application.Behaviours
             {
                 DesignDescription = dto.DesignDescription,
                 FabricDetails = dto.FabricDetails,
+                customerName = dto.customerName,
+                phoneNumber = dto.phoneNumber,
                 DepositAmount = dto.DepositAmount,
                 ShoulderWidth = dto.ShoulderWidth,
                 ChestCircumference = dto.ChestCircumference,
@@ -36,6 +38,8 @@ namespace ClothingBrand.Application.Behaviours
             order.DesignDescription = dto.DesignDescription ?? order.DesignDescription;
             order.FabricDetails = dto.FabricDetails ?? order.FabricDetails;
             order.DepositAmount = dto.DepositAmount ?? order.DepositAmount;
+            order.customerName = dto.customerName ?? order.customerName;
+            order.phoneNumber = dto.phoneNumber ?? order.phoneNumber;
             order.ShoulderWidth = dto.ShoulderWidth ?? order.ShoulderWidth;
             order.ChestCircumference = dto.ChestCircumference ?? order.ChestCircumference;
             order.WaistCircumference = dto.WaistCircumference ?? order.WaistCircumference;
@@ -53,6 +57,8 @@ namespace ClothingBrand.Application.Behaviours
                 Id = order.Id,
                 DesignDescription = order.DesignDescription,
                 FabricDetails = order.FabricDetails,
+                customerName = order.customerName,
+                phoneNumber = order.phoneNumber,
                 DepositAmount = order.DepositAmount,
                 CustomOrderStatus = order.CustomOrderStatus,
                 ShoulderWidth = order.ShoulderWidth,
