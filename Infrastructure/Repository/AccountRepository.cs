@@ -83,7 +83,7 @@ namespace infrastructure.Repos
                      issuer: config["Jwt:ValidIssuer"],
                      audience: config["Jwt:ValidAudiance"],
                      claims: userClaims,
-                     expires: DateTime.Now.ToLocalTime().AddMinutes(1),
+                     expires: DateTime.Now.ToLocalTime().AddMinutes(200),
                      signingCredentials: credentials
                       );
                 return new JwtSecurityTokenHandler().WriteToken(token);

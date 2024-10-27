@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ClothingBrand.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class CreateDatabase : Migration
+    public partial class createDB : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
