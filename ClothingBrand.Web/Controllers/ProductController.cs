@@ -39,7 +39,7 @@ namespace ClothingBrand.Web.Controllers
             return Ok();
         }
         [HttpPut("{id}")]
-       // [Authorize(Roles = "Admin")] // Only Admins can update products
+       [Authorize(Roles = "Admin")] // Only Admins can update products
         public IActionResult Update(int id,[FromForm]ProductDTO productDTO)
         {
             if (productDTO == null) { return BadRequest(); }
