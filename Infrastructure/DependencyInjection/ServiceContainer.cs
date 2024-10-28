@@ -76,7 +76,7 @@ namespace ClothingBrand.Infrastructure.DependencyInjection
             services.AddAuthorization();
             services.AddCors(options =>
             {
-                options.AddPolicy("Clean", bul => bul.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
+                options.AddPolicy("Clean", bul => bul.WithOrigins("http://localhost:4200").AllowAnyHeader().AllowAnyMethod().AllowCredentials());
             });
 
 

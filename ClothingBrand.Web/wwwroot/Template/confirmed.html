@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Confirmation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .confirmation-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+        }
+
+            .confirmation-container h1 {
+                color: #28a745;
+                font-size: 24px;
+                margin-bottom: 20px;
+            }
+
+            .confirmation-container p {
+                color: #555;
+                margin-bottom: 20px;
+            }
+
+            .confirmation-container .btn {
+                background-color: #28a745;
+                color: white;
+                padding: 10px 20px;
+                border: none;
+                border-radius: 5px;
+                text-decoration: none;
+                font-size: 16px;
+                cursor: pointer;
+            }
+
+                .confirmation-container .btn:hover {
+                    background-color: #218838;
+                }
+    </style>
+</head>
+<body>
+
+    <div class="confirmation-container">
+        <h1 id="HConfirmed">Email Confirmed!</h1>
+        <p>Thank you for confirming your email address. You can now access all features of our service.</p>
+        <!--<a href="your-home-page.html" class="btn">Go to Dashboard</a>-->
+    </div>
+
+
+    <script>// Retrieve the query parameters from the URL
+
+        document.addEventListener('DOMContentLoaded', function () {
+            let url = window.location.origin;
+
+
+            console.log(url);
+
+            const urlParams = new URLSearchParams(window.location.search);
+            console.log(urlParams);
+            const userId = urlParams.get('userId'); // Extract parameter value
+            const token = urlParams.get('token');
+            console.log(userId)
+            console.log(token)
+
+            // Set the message in the HTML
+            if (userId != null && token != null) {
+                console.log("enter")
+                url += "/api/Account/ConfirmEmail/?userId=" + userId + "&token=" + token;
+                console.log(url)
+
+                var xhr = new XMLHttpRequest();
+
+                fetch(url)
+                    .then(response => {
+                        // Check if the response is successful
+                        if (!response.ok) {
+                            console.log("no response")
+                            throw new Error('Network response was not ok ' + response.statusText);
+                        }
+                        return response.json(); // Convert the response to JSON
+                    })
+                    .then(data => {
+                        // Display the data on the web page
+                        console.log(" response is ok")
+                        document.getElementById('api-data').textContent = `Title: ${data.title}`;
+                    })
+                    .catch(error => {
+                        // Handle any errors that occur
+                        document.getElementById('api-data').textContent = `Error: ${error.message}`;
+                    });
+
+            } else {
+                document.getElementById('HConfirmed').innerHTML = "No message passed!";
+            }
+        });
+
+
+      
+
+    </script>
+</body>
+</html>

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ClothingBrand.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class init : Migration
+    public partial class CreateDatabase : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -247,6 +247,8 @@ namespace ClothingBrand.Infrastructure.Migrations
                     FabricDetails = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     DepositAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     CustomOrderStatus = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    customerName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    phoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ShoulderWidth = table.Column<double>(type: "float", nullable: false),
                     ChestCircumference = table.Column<double>(type: "float", nullable: false),
                     WaistCircumference = table.Column<double>(type: "float", nullable: false),
@@ -255,6 +257,7 @@ namespace ClothingBrand.Infrastructure.Migrations
                     ArmLength = table.Column<double>(type: "float", nullable: false),
                     BicepSize = table.Column<double>(type: "float", nullable: false),
                     ModelLength = table.Column<double>(type: "float", nullable: false),
+                    ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>

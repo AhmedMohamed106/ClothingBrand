@@ -14,7 +14,9 @@ namespace ClothingBrand.Domain.Models
         public string FabricDetails { get; set; }
         public decimal DepositAmount { get; set; }
         public string CustomOrderStatus { get; set; }
-
+        public string customerName { get; set; }
+        public string phoneNumber { get; set; }
+        public DateTime customOrderDate => DateTime.UtcNow;
         // Measurement properties
         public double ShoulderWidth { get; set; }
         public double ChestCircumference { get; set; }

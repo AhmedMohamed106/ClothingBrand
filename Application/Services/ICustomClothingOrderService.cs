@@ -16,6 +16,7 @@ namespace ClothingBrand.Application.Services
         void DeleteCustomClothingOrder(int id);
         CustomClothingOrderDto GetCustomClothingOrderById(int id);
         IEnumerable<CustomClothingOrderDto> GetAllCustomClothingOrders();
+        IEnumerable<CustomClothingOrderDto> GetUserOrders(string userId);
     }
 
 }

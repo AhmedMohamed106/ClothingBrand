@@ -4,6 +4,7 @@ namespace ClothingBrand.Web.helpers
 {
     public class OrderSummaryDto
     {
+        public int orderId { get; set; } 
         public DateTime OrderDate { get; set; }
         public decimal TotalPrice { get; set; }
         public string PaymentStatus { get; set; }

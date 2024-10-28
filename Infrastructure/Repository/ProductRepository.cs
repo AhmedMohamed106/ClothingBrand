@@ -2,13 +2,14 @@
 using ClothingBrand.Domain.Models;
 using ClothingBrand.Infrastructure.DataContext;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
 using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Drawing.Printing;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 
 namespace ClothingBrand.Infrastructure.Repository
 {
@@ -31,10 +32,21 @@ namespace ClothingBrand.Infrastructure.Repository
                 objFromDb.Price = obj.Price;
                 
                 objFromDb.Description = obj.Description;
-                objFromDb.CategoryId = obj.CategoryId; 
+                objFromDb.CategoryId = obj.CategoryId;
                 if (obj.ImageUrl != null)
                 {
+                    var oldImageUrl = objFromDb.ImageUrl;
                     objFromDb.ImageUrl = obj.ImageUrl;
+
+                    if (oldImageUrl != null)
+                    {
+                        //delete for old 
+                        if (System.IO.File.Exists(("wwwroot/images/" + oldImageUrl)))
+                        {
+
+                            System.IO.File.Delete(("wwwroot/images/" + oldImageUrl));
+                        }
+                    }
                 }
             }
            
