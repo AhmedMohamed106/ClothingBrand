@@ -27,7 +27,7 @@ using System.Net;
 using Microsoft.AspNetCore.WebUtilities;
 using ClothingBrand.Application.Common.DTO.Request.Account;
 using Microsoft.AspNetCore.Mvc;
-using ClothingBrand.Infrastructure.Migrations;
+
 
 namespace infrastructure.Repos
 {
