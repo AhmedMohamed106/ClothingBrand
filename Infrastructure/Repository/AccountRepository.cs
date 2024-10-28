@@ -82,7 +82,7 @@ namespace infrastructure.Repos
                      issuer: config["Jwt:ValidIssuer"],
                      audience: config["Jwt:ValidAudiance"],
                      claims: userClaims,
-                     expires: DateTime.Now.AddMinutes(30),
+                     expires: DateTime.Now.ToLocalTime().AddMinutes(1),
                      signingCredentials: credentials
                       );
                 return new JwtSecurityTokenHandler().WriteToken(token);
@@ -170,9 +170,9 @@ namespace infrastructure.Repos
                 var admin = new CreateAccountDTO()
                 {
                     Email = "ahmedshapan183@gmail.com",
-                    Password = "ahmed@123",
+                    Password = "Ahmed@123",
                     Name = "ahmed Shaban",
-                    Role = "admin"
+                    Role = "Admin"
                 };
                 await CreateAccountAsync(admin);
             }
@@ -219,7 +219,7 @@ namespace infrastructure.Repos
             try
             {
                 var user = await FindUserByEmailAsync(model.Email);
-                if (user == null) return new LoginResponse(false, "invalid Login");
+                if (user == null) return new LoginResponse(false, "User Name or Password invaild ");
                 Microsoft.AspNetCore.Identity.SignInResult signInResult;
                 try
                 {
@@ -227,7 +227,7 @@ namespace infrastructure.Repos
                 }
                 catch (Exception ex)
                 {
-                    return new LoginResponse(false, "invalid Login");
+                    return new LoginResponse(false, "User Name or Password invaild");
                 }
 
                 if (!signInResult.Succeeded)
@@ -236,11 +236,11 @@ namespace infrastructure.Repos
                         return new LoginResponse(false, "You need To Confirm Email");
                     }
 
-                    return new LoginResponse(false, "invalid Login");
+                    return new LoginResponse(false, "User Name or Password invaild");
                 }
                 string token = await GenerateToken(user);
                 string refreshToken = GenerateRefreshToken();
-                if (token is null || refreshToken is null) return new LoginResponse(false, "invalid Login");
+                if (token is null || refreshToken is null) return new LoginResponse(false, "User Name or Password invaild");
                 var saveResult = await SaveRefreshToken(user.Id, refreshToken);
                 if (saveResult.flag)
                     return new LoginResponse { flag = true, message = "Success", Token = token, RefreshToken = refreshToken,userId=user.Id };
@@ -252,17 +252,23 @@ namespace infrastructure.Repos
             }
         }
 
-        public async Task<LoginResponse> RefreshTokenAsync(RefreshTockenDto model)
+        public async Task<LoginResponse> RefreshTokenAsync(string Retoken)
         {
-            var token = await _context.RefreshTokens.FirstOrDefaultAsync(t => t.Token == model.Token);
+            
+            var token = await _context.RefreshTokens.FirstOrDefaultAsync(t => t.Token == Retoken);
             if (token == null) return new LoginResponse();
             var user = await userManager.FindByIdAsync(token.UserID);
-            //if (user == null) return new LoginResponse(false, "error");
+            if (user == null) return new LoginResponse(false, "error");
             var newToken = await GenerateToken(user);
+            if (!(token.ExpiryDate > DateTime.Now.AddDays(1)))
+            {
             var refreshToken = GenerateRefreshToken();
             var res = await SaveRefreshToken(user.Id, refreshToken);
-            if (!res.flag) return new LoginResponse();
+            if (!res.flag) return new LoginResponse(false, res.message);
             return new LoginResponse(true, res.message, newToken, refreshToken,user.Id);
+
+            }
+            return new LoginResponse(true, "successfully", newToken, token.Token, user.Id);
 
 
 
@@ -273,10 +279,14 @@ namespace infrastructure.Repos
             {
                 var user = await _context.RefreshTokens.FirstOrDefaultAsync(u => u.UserID == userID);
                 if (user == null)
-                    await _context.RefreshTokens.AddAsync(new RefreshTocken() { UserID = userID, Token = token });
+                    await _context.RefreshTokens.AddAsync(new RefreshTocken() { UserID = userID, Token = token, ExpiryDate = DateTime.Now.AddDays(7), IsRevoked = false });
+
                 else
+                {
                     user.Token = token;
-              //  await _context.SaveChangesAsync();
+                    user.ExpiryDate = DateTime.Now.AddDays(7);
+                }
+                await _context.SaveChangesAsync();
                 return new GeneralResponse { flag = true };
             }
             catch (Exception ex)
@@ -467,6 +477,13 @@ namespace infrastructure.Repos
             }
             return false;
 
+        }
+
+       public async Task<string> GetRoleOfUser(string userId)
+        {
+            var user=await userManager.FindByIdAsync(userId);
+            string role = (await userManager.GetRolesAsync(user)).FirstOrDefault().ToString();
+            return role;
         }
     }
 }

@@ -11,6 +11,8 @@ namespace ClothingBrand.Domain.Models
     {
         public string? Name { get; set; }
 
+
+        public List<RefreshTocken>? RefreshTokens { get; set; }
         public virtual ShoppingCart ShoppingCart { get; set; }
         public virtual ICollection<Payment> Payments { get; set; } = new List<Payment>();
         public virtual ICollection<Order> Orders { get; set; } = new List<Order>();

@@ -377,13 +377,22 @@ namespace ClothingBrand.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<DateTime>("ExpiryDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsRevoked")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Token")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserID")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("UserID");
 
                     b.ToTable("RefreshTokens");
                 });
@@ -745,6 +754,17 @@ namespace ClothingBrand.Infrastructure.Migrations
                     b.Navigation("Discount");
                 });
 
+            modelBuilder.Entity("ClothingBrand.Domain.Models.RefreshTocken", b =>
+                {
+                    b.HasOne("ClothingBrand.Domain.Models.ApplicationUser", "User")
+                        .WithMany("RefreshTokens")
+                        .HasForeignKey("UserID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("ClothingBrand.Domain.Models.ShoppingCart", b =>
                 {
                     b.HasOne("ClothingBrand.Domain.Models.ApplicationUser", "User")
@@ -835,6 +855,8 @@ namespace ClothingBrand.Infrastructure.Migrations
                     b.Navigation("Orders");
 
                     b.Navigation("Payments");
+
+                    b.Navigation("RefreshTokens");
 
                     b.Navigation("ShoppingCart")
                         .IsRequired();
