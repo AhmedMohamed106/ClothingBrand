@@ -118,7 +118,7 @@ namespace ClothingBrand.Application.Services
                 CategoryId = productDTO.CategoryId,
                 Name = productDTO.Name,
                 Description = productDTO.Description,
-                ImageUrl = await GeTImageUrlAsync(productDTO.Image),
+                ImageUrl =productDTO.Image==null?null: await GeTImageUrlAsync(productDTO.Image),
                 ISBN = productDTO.ISBN,
                 StockQuantity = productDTO.StockQuantity,
                 Price = productDTO.Price,
@@ -126,6 +126,7 @@ namespace ClothingBrand.Application.Services
                 Id = id
 
             };
+
             
             _unitRepository.productRepository.Update(product);
             _unitRepository.Save();

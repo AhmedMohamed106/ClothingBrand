@@ -47,7 +47,7 @@ namespace ClothingBrand.WebApi.Controllers
         }
 
         [HttpPost("add")]
-        [Authorize(Roles = "user")] // Allow both User and Admin to add to the cart
+        [Authorize(Roles = "user ,Admin")] // Allow both User and Admin to add to the cart
         public IActionResult AddToCart(string userId , [FromBody] AddToCartRequestDto request)
         {
             //var userId = HttpContext.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -98,7 +98,7 @@ namespace ClothingBrand.WebApi.Controllers
         
         // POST: api/shoppingcart/checkout
         [HttpPost("checkout")]
-        [Authorize(Roles = "user")]
+        [Authorize(Roles = "user ,Admin")]
         public IActionResult Checkout([FromBody] CheckoutRequestDto checkoutRequest)
         {
             if (checkoutRequest == null)

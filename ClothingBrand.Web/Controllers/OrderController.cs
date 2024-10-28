@@ -41,11 +41,7 @@ namespace ClothingBrand.Api.Controllers
             {
                 var orderSummary = new OrderSummaryDto
                 {
-<<<<<<< HEAD
                     Id = order.OrderId,
-=======
-                    orderId= order.OrderId,
->>>>>>> origin/Mekawy
                     OrderDate = order.OrderDate,
                     TotalPrice = order.TotalPrice,
                     PaymentStatus = order.PaymentStatus,
@@ -88,11 +84,8 @@ namespace ClothingBrand.Api.Controllers
 
             var orderSummary = new OrderSummaryDto
             {
-<<<<<<< HEAD
                 Id = order.OrderId,
-=======
                 orderId = order.OrderId,
->>>>>>> origin/Mekawy
                 OrderDate = order.OrderDate,
                 TotalPrice = order.TotalPrice,
                 PaymentStatus = order.PaymentStatus,
