@@ -23,7 +23,7 @@ namespace ClothingBrand.Web.Controllers
             _mailingService = mailingService;
         }
         [HttpGet]
-        [Authorize]
+        //[Authorize]
         public IActionResult GetAll() {
             var products = _productService.GetAll();
           return Ok(products);
@@ -48,7 +48,7 @@ namespace ClothingBrand.Web.Controllers
 
             return Ok();
         }
-        [Authorize]
+        
         [HttpGet("{id}")]
         public IActionResult Get(int id)
         {

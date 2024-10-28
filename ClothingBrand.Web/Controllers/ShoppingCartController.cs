@@ -1,4 +1,5 @@
-﻿using ClothingBrand.Application.Common.DTO.OrderDto;
+﻿using Application.DTOs.Response;
+using ClothingBrand.Application.Common.DTO.OrderDto;
 using ClothingBrand.Application.Common.DTO.Response.Payment;
 using ClothingBrand.Application.Common.DTO.Response.Shipping;
 using ClothingBrand.Application.Common.DTO.Response.ShoppingCart;
@@ -69,14 +70,14 @@ namespace ClothingBrand.WebApi.Controllers
             try
             {
                 _shoppingCartService.AddToCart(userId, requestDto);
-                return Ok("Item added to cart successfully.");
+                return Ok(new GeneralResponse(true, "Item added to cart successfully."));
             }
             catch (Exception ex)
             {
                 // Log the detailed error
                 _logger.LogError(ex, "Error adding item to cart for user {UserId}", userId);
                 // Return a generic error message
-                return BadRequest("An error occurred while adding the item to the cart.");
+                return BadRequest(new GeneralResponse(false, "An error occurred while adding the item to the cart."));
             }
         }
 
@@ -88,11 +89,11 @@ namespace ClothingBrand.WebApi.Controllers
             try
             {
                 _shoppingCartService.RemoveFromCart(userId, productId);
-                return Ok("Item removed from cart successfully.");
+                return Ok(new GeneralResponse(true, "Item removed from cart successfully."));
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(new GeneralResponse(true, ex.Message));
             }
         }
         
@@ -178,11 +179,11 @@ namespace ClothingBrand.WebApi.Controllers
             try
             {
                 _shoppingCartService.ClearCart(userId);
-                return Ok("Shopping cart cleared successfully.");
+                return Ok(new GeneralResponse(true, "Shopping cart cleared successfully."));
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(new GeneralResponse(false, ex.Message));
             }
         }
     }
