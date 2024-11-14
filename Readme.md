@@ -122,3 +122,11 @@ CoutureConnect
    git clone https://github.com/ahmedmohamed106//ClothingBrand.git
    cd ClothingBrand
 
+
+### Frontend Setup    
+
+#### check link of repository 
+```bash
+https://github.com/Enas20Hussein/ClothesBrand
+   
+
