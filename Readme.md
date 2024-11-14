@@ -1,4 +1,4 @@
-# **Sewing Atelier System**
+# Sewing Atelier System - ITI Graduation Project
 
 Sewing Atelier is an all-in-one web application for the fashion industry, merging e-commerce, custom order management, and educational courses. It allows users to purchase ready-made clothing, request custom-tailored garments, and enroll in courses.
 
